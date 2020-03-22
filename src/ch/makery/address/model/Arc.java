@@ -1,4 +1,4 @@
-package ch.makery.address.module;
+package ch.makery.address.model;
 
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;

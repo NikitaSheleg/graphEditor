@@ -1,9 +1,8 @@
-package ch.makery.address.module;
+package ch.makery.address.model;
 
 import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Graph {
     private ArrayList<ArrayList<Integer>> matrixAdjancy;

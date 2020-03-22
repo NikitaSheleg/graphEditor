@@ -1,42 +1,29 @@
 package ch.makery.address.controller;
 
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import ch.makery.address.module.Arc;
-import ch.makery.address.module.Graph;
+import ch.makery.address.model.Arc;
+import ch.makery.address.model.Graph;
+import ch.makery.address.model.Vertex;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.transform.Translate;
-
-import javax.swing.*;
 
 public class MyControler implements Initializable {
     private final float CIRCLE_RADIUS = 10.0f;
@@ -138,7 +125,6 @@ public class MyControler implements Initializable {
             Dragboard db = circleArray.get(0).startDragAndDrop(TransferMode.ANY);
         }
     };
-
     //Ивент рисования круга
     EventHandler<MouseEvent> drawCircle = new EventHandler<MouseEvent>() {
         @Override
@@ -153,10 +139,12 @@ public class MyControler implements Initializable {
                 circle.setPickOnBounds(true);
                 circle.setFill(Color.WHITE);
                 countCircle++;
+
                 circle.setId(String.valueOf(countCircle));
                 graph.addVertex(circleArray);
                 /*circle.setOnMousePressed(circleOnMousePressedEventHandler);
                 circle.setOnMouseDragged(circleOnMouseDraggedEventHandler);*/
+
                 MyApplication.pane.getChildren().add(circle);
 
             }
@@ -188,9 +176,9 @@ public class MyControler implements Initializable {
                     double offsetY = t.getSceneY() - orgSceneY;
                     double newTranslateX = orgTranslateX + offsetX;
                     double newTranslateY = orgTranslateY + offsetY;
-
-                    ((Circle) (t.getSource())).setTranslateX(newTranslateX);
-                    ((Circle) (t.getSource())).setTranslateY(newTranslateY);
+                    Circle circle = (Circle) t.getSource();
+                    circle.setTranslateX(newTranslateX);
+                    circle.setTranslateY(newTranslateY);
 
                 }
             };
@@ -208,8 +196,8 @@ public class MyControler implements Initializable {
                     x1 = t.getSceneX();
                     y1 = t.getSceneY();
                     arc.setBegin(((Circle) (t.getSource())));
-                    arc.setStartX(x1);
-                    arc.setStartY(y1);
+                    arc.setStartX(((Circle) (t.getSource())).getCenterX());
+                    arc.setStartY(((Circle) (t.getSource())).getCenterY());
                 } else {
                     if (x2 == 0 && y2 == 0) {
                         x2 = t.getSceneX();
@@ -218,8 +206,8 @@ public class MyControler implements Initializable {
                         arc.setEnd(((Circle) (t.getSource())));
 
 
-                        arc.setEndX(x2);
-                        arc.setEndY(y2);
+                        arc.setEndX(((Circle) (t.getSource())).getCenterX());
+                        arc.setEndY(((Circle) (t.getSource())).getCenterY());
 
                         arcArray.add(arc);
 
@@ -239,7 +227,7 @@ public class MyControler implements Initializable {
                         x2 = 0;
                         y1 = 0;
                         y2 = 0;
-                        this.arc = new Arc(0, 0, 0, 0);
+                        this.arc = new Arc(x1, y1, x2, y2);
                     }
 
                 }
