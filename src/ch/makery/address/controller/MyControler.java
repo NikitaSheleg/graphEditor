@@ -1,42 +1,31 @@
 package ch.makery.address.controller;
 
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
+import java.util.List;
 import java.util.ResourceBundle;
+
 
 import ch.makery.address.module.Arc;
 import ch.makery.address.module.Graph;
+import ch.makery.address.module.Vertex;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.transform.Translate;
-
-import javax.swing.*;
 
 public class MyControler implements Initializable {
     private final float CIRCLE_RADIUS = 10.0f;
@@ -139,6 +128,7 @@ public class MyControler implements Initializable {
         }
     };
 
+    List<Vertex> vertices = new ArrayList<>();
     //Ивент рисования круга
     EventHandler<MouseEvent> drawCircle = new EventHandler<MouseEvent>() {
         @Override
@@ -153,10 +143,18 @@ public class MyControler implements Initializable {
                 circle.setPickOnBounds(true);
                 circle.setFill(Color.WHITE);
                 countCircle++;
+
+
+                Vertex vertex = new Vertex();
+                vertex.setCircle(circle);
+                vertices.add(vertex);
+                circle.setAccessibleText("str");
+
                 circle.setId(String.valueOf(countCircle));
                 graph.addVertex(circleArray);
                 /*circle.setOnMousePressed(circleOnMousePressedEventHandler);
                 circle.setOnMouseDragged(circleOnMouseDraggedEventHandler);*/
+
                 MyApplication.pane.getChildren().add(circle);
 
             }
@@ -184,46 +182,75 @@ public class MyControler implements Initializable {
 
                 @Override
                 public void handle(MouseEvent t) {
-                    double offsetX = t.getSceneX() - orgSceneX;
-                    double offsetY = t.getSceneY() - orgSceneY;
-                    double newTranslateX = orgTranslateX + offsetX;
-                    double newTranslateY = orgTranslateY + offsetY;
-
-                    ((Circle) (t.getSource())).setTranslateX(newTranslateX);
-                    ((Circle) (t.getSource())).setTranslateY(newTranslateY);
-
+                    Circle circle = (Circle) t.getSource();
+                    circle.setCenterX(t.getSceneX());
+                    circle.setCenterY(t.getSceneY());
+                    for (Vertex vertex : vertices) {
+                        if (vertex.getCircle() == circle && vertex.getArcs() != null) {
+                            for (Arc arc : vertex.getArcs()) {
+                                if (arc.getBegin() == vertex.getCircle()) {
+                                    arc.setStartX(circle.getCenterX());
+                                    arc.setStartY(circle.getCenterY());
+                                } else if (arc.getEnd() == vertex.getCircle()) {
+                                    arc.setEndX(circle.getCenterX());
+                                    arc.setEndY(circle.getCenterY());
+                                }
+                            }
+                        }
+                    }
                 }
             };
 
 
-    EventHandler<MouseEvent> lineDrawEvent =  new EventHandler<MouseEvent>() {
+    EventHandler<MouseEvent> lineDrawEvent = new EventHandler<MouseEvent>() {
+        Arc arc = new Arc(0, 0, 0, 0);
+        @Override
+        public void handle(MouseEvent t) {
+            if (penLine.isDisable()) {
 
-                @Override
-                public void handle(MouseEvent t) {
-                    if (penLine.isDisable()) {
-                        Arc arc = new Arc(0,0,0,0);
-                        if (x1 == 0 && y1 == 0) {
+                if (x1 == 0 && y1 == 0) {
+                    Circle circle = (Circle) t.getSource();
+
+                    for (Vertex vertex : vertices) {
+                        if (vertex.getCircle() == circle) {
                             x1 = t.getSceneX();
                             y1 = t.getSceneY();
-                            arc.setEnd(((Circle) (t.getSource())));
-                        } else {
-                            if (x2 == 0 && y2 == 0) {
-                                x2 = t.getSceneX();
-                                y2 = t.getSceneY();
+                            arc.setBegin(((Circle) (t.getSource())));
+                            arc.setStartX(((Circle) (t.getSource())).getCenterX());
+                            arc.setStartY(((Circle) (t.getSource())).getCenterY());
+                            vertex.addArc(arc);
+                        }
+                    }
 
-                                arc.setBegin(((Circle) (t.getSource())));
+                } else {
+                    if (x2 == 0 && y2 == 0) {
+                        x2 = t.getSceneX();
+                        y2 = t.getSceneY();
+                        Circle circle = (Circle) (t.getSource());
+                        for (Vertex vertex : vertices) {
+                            if (vertex.getCircle() == circle) {
+                                vertex.addArc(arc);
+                                arc.setEnd(circle);
 
-
-                                arc.setStartX(x1);
-                                arc.setStartY(y1);
-                                arc.setEndX(x2);
-                                arc.setEndY(y2);
+                                arc.setEndX(((Circle) (t.getSource())).getCenterX());
+                                arc.setEndY(((Circle) (t.getSource())).getCenterY());
 
                                 arcArray.add(arc);
 
-                                //Чекни почему не ссылка с круга Begin удаляется!
-                                arc.getBegin().setFill(Color.GREEN);
-                                arc.getEnd().setFill(Color.BROWN);
+                                //dобавил немножко от себя
+
+                                if (arc.getBegin().getFill() == Color.WHITE) {
+                                    arc.getBegin().setFill(Color.GREEN);
+                                }
+                                if (arc.getEnd().getFill() == Color.WHITE && arc.getBegin().getFill() == Color.GREEN) {
+                                    arc.getEnd().setFill(Color.BROWN);
+                                } else if (arc.getBegin().getFill() == arc.getEnd().getFill()) {
+                                    arc.getBegin().setFill(Color.STEELBLUE);
+                                } else if (arc.getBegin().getFill() == Color.BROWN) {
+                                    arc.getEnd().setFill(Color.GREEN);
+                                } else if (arc.getEnd().getFill() == Color.GREEN) {
+                                    arc.getBegin().setFill(Color.BROWN);
+                                }
 
 
                                 MyApplication.pane.getChildren().add(arc);
@@ -231,11 +258,17 @@ public class MyControler implements Initializable {
                                 x2 = 0;
                                 y1 = 0;
                                 y2 = 0;
+                                this.arc = new Arc(x1, y1, x2, y2);
                             }
                         }
+
                     }
+
                 }
-            };
+
+            }
+        }
+    };
 
 
 }
