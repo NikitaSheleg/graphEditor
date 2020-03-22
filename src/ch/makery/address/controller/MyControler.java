@@ -206,7 +206,6 @@ public class MyControler implements Initializable {
                             x1 = t.getSceneX();
                             y1 = t.getSceneY();
                             arc.setEnd(((Circle) (t.getSource())));
-                            arc.getEnd().setFill(Color.BROWN);
                         } else {
                             if (x2 == 0 && y2 == 0) {
                                 x2 = t.getSceneX();
@@ -221,6 +220,11 @@ public class MyControler implements Initializable {
                                 arc.setEndY(y2);
 
                                 arcArray.add(arc);
+
+                                //Чекни почему не ссылка с круга Begin удаляется!
+                                arc.getBegin().setFill(Color.GREEN);
+                                arc.getEnd().setFill(Color.BROWN);
+
 
                                 MyApplication.pane.getChildren().add(arc);
                                 x1 = 0;
