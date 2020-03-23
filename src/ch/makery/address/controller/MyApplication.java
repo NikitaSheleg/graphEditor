@@ -34,19 +34,6 @@ public class MyApplication extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
 
-
-            /*EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent e) {
-                    System.out.println("Hello World");
-                   // scene.setCursor(Cursor.CROSSHAIR);
-
-                }
-            };
-
-            scene.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);*/
-
-
             //Creating the mouse event handler
 
         } catch (Exception e) {

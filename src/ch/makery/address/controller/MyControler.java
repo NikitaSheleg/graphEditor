@@ -19,9 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -88,6 +86,7 @@ public class MyControler implements Initializable {
             circle.setOnMouseDragged(null);
         }
 
+
     }
 
     //Ивент нажатия кнопки
@@ -105,6 +104,7 @@ public class MyControler implements Initializable {
             circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
         }
 
+
     }
 
 
@@ -113,10 +113,19 @@ public class MyControler implements Initializable {
         penCircle.setDisable(false);
         penLine.setDisable(false);
         transform.setDisable(true);
+
         for (Circle circle : circleArray) {
             circle.setOnMousePressed(circleOnMousePressedEventHandler);
             circle.setOnMouseDragged(circleOnMouseDraggedEventHandler);
+
         }
+        System.out.println(arcArray.size());
+        for (Arc arc : arcArray) {
+            arc.setOnMousePressed(weightArc);
+
+            arc.setOnMouseDragged(transLine);
+        }
+
 
     }
 
@@ -152,8 +161,7 @@ public class MyControler implements Initializable {
 
                 circle.setId(String.valueOf(countCircle));
                 graph.addVertex(circleArray);
-                /*circle.setOnMousePressed(circleOnMousePressedEventHandler);
-                circle.setOnMouseDragged(circleOnMouseDraggedEventHandler);*/
+
 
                 MyApplication.pane.getChildren().add(circle);
 
@@ -204,6 +212,7 @@ public class MyControler implements Initializable {
 
     EventHandler<MouseEvent> lineDrawEvent = new EventHandler<MouseEvent>() {
         Arc arc = new Arc(0, 0, 0, 0);
+
         @Override
         public void handle(MouseEvent t) {
             if (penLine.isDisable()) {
@@ -251,6 +260,7 @@ public class MyControler implements Initializable {
                                 } else if (arc.getEnd().getFill() == Color.GREEN) {
                                     arc.getBegin().setFill(Color.BROWN);
                                 }
+                                arc.setStrokeWidth(4);
 
 
                                 MyApplication.pane.getChildren().add(arc);
@@ -269,6 +279,40 @@ public class MyControler implements Initializable {
             }
         }
     };
+
+    EventHandler<MouseEvent> weightArc =
+            new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent t) {
+                    Arc arc = (Arc) t.getSource();
+                    arc.setStroke(Color.GREEN);
+                    arc.getScene().setOnKeyPressed(e -> {
+                        if (e.getCode() == KeyCode.R) {
+                            arc.setEndY(567);
+                            arc.setStroke(Color.GRAY);
+                        }
+                    });
+
+                }
+            };
+
+    EventHandler<MouseEvent> transLine =
+            new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent t) {
+                    Arc arc = (Arc) t.getSource();
+                    if (t.getSceneX() < (arc.getStartX() + arc.getEndX()) / 2 && t.getSceneY() < (arc.getStartX() + arc.getEndX() / 2)) {
+                        arc.setStartX(t.getSceneX());
+                        arc.setStartY(t.getSceneY());
+                    } else if (t.getSceneX() > (arc.getStartX() + arc.getEndX()) / 2 && t.getSceneY() > (arc.getStartX() + arc.getEndX() / 2)) {
+                        arc.setEndX(t.getSceneX());
+                        arc.setEndY(t.getSceneY());
+                    }
+
+                }
+            };
 
 
 }
