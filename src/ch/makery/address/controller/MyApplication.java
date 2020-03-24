@@ -34,7 +34,6 @@ public class MyApplication extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
             MyControler.stage = primaryStage;
-            //Creating the mouse event handler
 
         } catch (Exception e) {
             e.printStackTrace();

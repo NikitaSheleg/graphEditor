@@ -1,5 +1,6 @@
 package ch.makery.address.model;
 
+import ch.makery.address.controller.MyApplication;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
@@ -16,6 +17,10 @@ public class Vertex {
 
     public Text getText() {
         return text;
+    }
+
+    public void setTextInPane(){
+        MyApplication.pane.getChildren().add(text);
     }
 
     public void setText(Text text) {
