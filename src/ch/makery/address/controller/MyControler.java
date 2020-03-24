@@ -16,20 +16,29 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.transform.Translate;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class MyControler implements Initializable {
     private final float CIRCLE_RADIUS = 10.0f;
     private Translate translate = new Translate();
     public static int countCircle = 0;
     public Graph graph = new Graph();
+
+    public static Stage stage;
+
+
 
     private double x1, x2 = 0;
     private double y1, y2 = 0;
@@ -186,10 +195,43 @@ public class MyControler implements Initializable {
                 @Override
                 public void handle(MouseEvent t) {
                     if (transform.isDisable()) {
-                        orgSceneX = t.getSceneX();
-                        orgSceneY = t.getSceneY();
-                        orgTranslateX = ((Circle) (t.getSource())).getTranslateX();
-                        orgTranslateY = ((Circle) (t.getSource())).getTranslateY();
+                        Circle circle = (Circle) t.getSource();
+
+                        for (Vertex vertex : vertices) {
+                            vertex.getCircle().setFill(Color.WHITE);
+                            if (vertex.getCircle() == circle) {
+                                vertex.getCircle().setFill(Color.GREEN);
+                                vertex.getCircle().getScene().setOnKeyPressed(e -> {
+                                    if (e.getCode() == KeyCode.R) {
+                                        Label secondLabel = new Label("Enter name vertex");
+
+                                        StackPane secondaryLayout = new StackPane();
+                                        secondaryLayout.getChildren().add(secondLabel);
+
+                                        Scene secondScene = new Scene(secondaryLayout, 230, 100);
+
+                                        // New window (Stage)
+                                        Stage newWindow = new Stage();
+                                        newWindow.setTitle("Second Stage");
+                                        newWindow.setScene(secondScene);
+
+                                        // Specifies the modality for new window.
+                                        newWindow.initModality(Modality.WINDOW_MODAL);
+
+                                        // Specifies the owner Window (parent) for new window
+                                        newWindow.initOwner(stage);
+
+                                        // Set position of second window, related to primary window.
+                                        newWindow.setX(stage.getX());
+                                        newWindow.setY(stage.getY());
+
+                                        newWindow.show();
+                                    }
+                                });
+                            }
+                        }
+
+
                     }
                 }
             };
@@ -214,6 +256,7 @@ public class MyControler implements Initializable {
                                 }
                             }
                         }
+
                     }
                 }
             };
@@ -225,6 +268,9 @@ public class MyControler implements Initializable {
         @Override
         public void handle(MouseEvent t) {
             if (penLine.isDisable()) {
+                for (Vertex vertex : vertices) {
+                    vertex.getCircle().setFill(Color.WHITE);
+                }
 
                 if (x1 == 0 && y1 == 0) {
                     Circle circle = (Circle) t.getSource();
@@ -258,7 +304,9 @@ public class MyControler implements Initializable {
 
                                 //dобавил немножко от себя
 
-                                if (arc.getBegin().getCircle().getFill() == Color.WHITE) {
+                                //Красить в цвета кружочки
+
+                                /*if (arc.getBegin().getCircle().getFill() == Color.WHITE) {
                                     arc.getBegin().getCircle().setFill(Color.GREEN);
                                 }
                                 if (arc.getEnd().getCircle().getFill() == Color.WHITE && arc.getBegin().getCircle().getFill() == Color.GREEN) {
@@ -269,7 +317,7 @@ public class MyControler implements Initializable {
                                     arc.getEnd().getCircle().setFill(Color.GREEN);
                                 } else if (arc.getEnd().getCircle().getFill() == Color.GREEN) {
                                     arc.getBegin().getCircle().setFill(Color.BROWN);
-                                }
+                                }*/
                                 arc.setStrokeWidth(4);
                                 graph.addArc(arc);
 
@@ -312,6 +360,9 @@ public class MyControler implements Initializable {
 
                 @Override
                 public void handle(MouseEvent t) {
+                    for (Vertex vertex : vertices) {
+                        vertex.getCircle().setFill(Color.WHITE);
+                    }
                     Arc arc = (Arc) t.getSource();
                     if (Math.abs(t.getSceneX() - arc.getStartX()) < 25 && Math.abs(t.getSceneY() - arc.getStartY()) < 25) {
                         arc.setStartX(t.getSceneX());
