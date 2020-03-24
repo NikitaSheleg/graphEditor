@@ -2,14 +2,15 @@ package ch.makery.address.controller;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.security.spec.MGF1ParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 
-import ch.makery.address.module.Arc;
-import ch.makery.address.module.Graph;
-import ch.makery.address.module.Vertex;
+import ch.makery.address.model.Arc;
+import ch.makery.address.model.Graph;
+import ch.makery.address.model.Vertex;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,7 +22,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.transform.Translate;
 
@@ -104,28 +104,37 @@ public class MyControler implements Initializable {
             circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
         }
 
+        graph.showMultipleArc(arcArray);
+
 
     }
 
+    Runnable thread = new Runnable() {
+        @Override
+        public void run() {
+            for (Circle circle : circleArray) {
+                circle.setOnMousePressed(circleOnMousePressedEventHandler);
+                circle.setOnMouseDragged(circleOnMouseDraggedEventHandler);
+
+            }
+            System.out.println(arcArray.size());
+            for (Arc arc : arcArray) {
+                //arc.setOnMousePressed(weightArc); //Метод с кнопкой
+
+                arc.setOnMouseDragged(transLine);
+            }
+
+        }
+    };
 
     public void transformAction(ActionEvent event) {
         MyApplication.scene.setCursor(Cursor.DEFAULT);
         penCircle.setDisable(false);
+
         penLine.setDisable(false);
         transform.setDisable(true);
 
-        for (Circle circle : circleArray) {
-            circle.setOnMousePressed(circleOnMousePressedEventHandler);
-            circle.setOnMouseDragged(circleOnMouseDraggedEventHandler);
-
-        }
-        System.out.println(arcArray.size());
-        for (Arc arc : arcArray) {
-            arc.setOnMousePressed(weightArc);
-
-            arc.setOnMouseDragged(transLine);
-        }
-
+        thread.run();
 
     }
 
@@ -151,7 +160,6 @@ public class MyControler implements Initializable {
                 circle.setStroke(Color.GREEN);
                 circle.setPickOnBounds(true);
                 circle.setFill(Color.WHITE);
-                countCircle++;
 
 
                 Vertex vertex = new Vertex();
@@ -159,8 +167,9 @@ public class MyControler implements Initializable {
                 vertices.add(vertex);
                 circle.setAccessibleText("str");
 
-                circle.setId(String.valueOf(countCircle));
+                vertex.setId(countCircle);
                 graph.addVertex(circleArray);
+                countCircle++;
 
 
                 MyApplication.pane.getChildren().add(circle);
@@ -196,10 +205,10 @@ public class MyControler implements Initializable {
                     for (Vertex vertex : vertices) {
                         if (vertex.getCircle() == circle && vertex.getArcs() != null) {
                             for (Arc arc : vertex.getArcs()) {
-                                if (arc.getBegin() == vertex.getCircle()) {
+                                if (arc.getBegin().getCircle() == vertex.getCircle()) {
                                     arc.setStartX(circle.getCenterX());
                                     arc.setStartY(circle.getCenterY());
-                                } else if (arc.getEnd() == vertex.getCircle()) {
+                                } else if (arc.getEnd().getCircle() == vertex.getCircle()) {
                                     arc.setEndX(circle.getCenterX());
                                     arc.setEndY(circle.getCenterY());
                                 }
@@ -224,7 +233,8 @@ public class MyControler implements Initializable {
                         if (vertex.getCircle() == circle) {
                             x1 = t.getSceneX();
                             y1 = t.getSceneY();
-                            arc.setBegin(((Circle) (t.getSource())));
+
+                            arc.setBegin(vertex);
                             arc.setStartX(((Circle) (t.getSource())).getCenterX());
                             arc.setStartY(((Circle) (t.getSource())).getCenterY());
                             vertex.addArc(arc);
@@ -239,7 +249,7 @@ public class MyControler implements Initializable {
                         for (Vertex vertex : vertices) {
                             if (vertex.getCircle() == circle) {
                                 vertex.addArc(arc);
-                                arc.setEnd(circle);
+                                arc.setEnd(vertex);
 
                                 arc.setEndX(((Circle) (t.getSource())).getCenterX());
                                 arc.setEndY(((Circle) (t.getSource())).getCenterY());
@@ -248,20 +258,20 @@ public class MyControler implements Initializable {
 
                                 //dобавил немножко от себя
 
-                                if (arc.getBegin().getFill() == Color.WHITE) {
-                                    arc.getBegin().setFill(Color.GREEN);
+                                if (arc.getBegin().getCircle().getFill() == Color.WHITE) {
+                                    arc.getBegin().getCircle().setFill(Color.GREEN);
                                 }
-                                if (arc.getEnd().getFill() == Color.WHITE && arc.getBegin().getFill() == Color.GREEN) {
-                                    arc.getEnd().setFill(Color.BROWN);
-                                } else if (arc.getBegin().getFill() == arc.getEnd().getFill()) {
-                                    arc.getBegin().setFill(Color.STEELBLUE);
-                                } else if (arc.getBegin().getFill() == Color.BROWN) {
-                                    arc.getEnd().setFill(Color.GREEN);
-                                } else if (arc.getEnd().getFill() == Color.GREEN) {
-                                    arc.getBegin().setFill(Color.BROWN);
+                                if (arc.getEnd().getCircle().getFill() == Color.WHITE && arc.getBegin().getCircle().getFill() == Color.GREEN) {
+                                    arc.getEnd().getCircle().setFill(Color.BROWN);
+                                } else if (arc.getBegin().getCircle().getFill() == arc.getEnd().getCircle().getFill()) {
+                                    arc.getBegin().getCircle().setFill(Color.STEELBLUE);
+                                } else if (arc.getBegin().getCircle().getFill() == Color.BROWN) {
+                                    arc.getEnd().getCircle().setFill(Color.GREEN);
+                                } else if (arc.getEnd().getCircle().getFill() == Color.GREEN) {
+                                    arc.getBegin().getCircle().setFill(Color.BROWN);
                                 }
                                 arc.setStrokeWidth(4);
-
+                                graph.addArc(arc);
 
                                 MyApplication.pane.getChildren().add(arc);
                                 x1 = 0;
@@ -280,7 +290,7 @@ public class MyControler implements Initializable {
         }
     };
 
-    EventHandler<MouseEvent> weightArc =
+    /*EventHandler<MouseEvent> weightArc =
             new EventHandler<MouseEvent>() {
 
                 @Override
@@ -295,7 +305,7 @@ public class MyControler implements Initializable {
                     });
 
                 }
-            };
+            };*/
 
     EventHandler<MouseEvent> transLine =
             new EventHandler<MouseEvent>() {
@@ -303,16 +313,35 @@ public class MyControler implements Initializable {
                 @Override
                 public void handle(MouseEvent t) {
                     Arc arc = (Arc) t.getSource();
-                    if (t.getSceneX() < (arc.getStartX() + arc.getEndX()) / 2 && t.getSceneY() < (arc.getStartX() + arc.getEndX() / 2)) {
+                    if (Math.abs(t.getSceneX() - arc.getStartX()) < 25 && Math.abs(t.getSceneY() - arc.getStartY()) < 25) {
                         arc.setStartX(t.getSceneX());
                         arc.setStartY(t.getSceneY());
-                    } else if (t.getSceneX() > (arc.getStartX() + arc.getEndX()) / 2 && t.getSceneY() > (arc.getStartX() + arc.getEndX() / 2)) {
+                        for (Vertex vertex : vertices) {
+                            if (Math.abs(arc.getStartX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getStartY() - vertex.getCircle().getCenterY()) < 15) {
+                                arc.setStartX(vertex.getCircle().getCenterX());
+                                arc.setStartY(vertex.getCircle().getCenterY());
+                                arc.setBegin(vertex);
+                                vertex.addArc(arc);
+                            }
+                        }
+                    } else if (Math.abs(t.getSceneX() - arc.getEndX()) < 25 && Math.abs(t.getSceneY() - arc.getEndY()) < 25) {
                         arc.setEndX(t.getSceneX());
                         arc.setEndY(t.getSceneY());
+                        for (Vertex vertex : vertices) {
+                            if (Math.abs(arc.getEndX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getEndY() - vertex.getCircle().getCenterY()) < 15) {
+                                arc.setEndX(vertex.getCircle().getCenterX());
+                                arc.setEndY(vertex.getCircle().getCenterY());
+                                arc.setEnd(vertex);
+                                vertex.addArc(arc);
+
+                            }
+                        }
                     }
+
 
                 }
             };
-
-
 }
+
+
+
