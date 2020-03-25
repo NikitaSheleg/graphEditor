@@ -17,10 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -52,6 +49,9 @@ public class MyControler implements Initializable {
     private Button penCircle = new Button();
 
     @FXML
+    private MenuItem showMultipleArcBut = new MenuItem();
+
+    @FXML
     private Button penLine = new Button();
 
     @FXML
@@ -59,6 +59,7 @@ public class MyControler implements Initializable {
 
     private ArrayList<Circle> circleArray = new ArrayList<>();
     private ArrayList<Arc> arcArray = new ArrayList<>();
+    List<Vertex> vertices = new ArrayList<>();
 
 
     @Override
@@ -85,6 +86,11 @@ public class MyControler implements Initializable {
 
     }
 
+    public void  showMultipleArc(ActionEvent event) {
+        graph.showMultipleArc(arcArray);
+
+
+    }
     // Ивент нажатия кнопки
     public void penCircleAction(ActionEvent event) {
         MyApplication.scene.setCursor(Cursor.DEFAULT);
@@ -114,10 +120,6 @@ public class MyControler implements Initializable {
         for (Circle circle : circleArray) {
             circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
         }
-
-        graph.showMultipleArc(arcArray);
-
-
     }
 
     Runnable thread = new Runnable() {
@@ -157,7 +159,7 @@ public class MyControler implements Initializable {
         }
     };
 
-    List<Vertex> vertices = new ArrayList<>();
+
     //Ивент рисования круга
     EventHandler<MouseEvent> drawCircle = new EventHandler<MouseEvent>() {
         @Override
@@ -206,18 +208,11 @@ public class MyControler implements Initializable {
                             if (vertex.getCircle() == circle) {
                                 vertex.getCircle().setFill(Color.GREEN);
                                 vertex.getCircle().getScene().setOnKeyPressed(e -> {
-                                    if (e.getCode() == KeyCode.R) {
+                                    if (e.getCode() == KeyCode.I) {
                                         Label secondLabel = new Label("Enter name vertex");
                                         TextField textField = new TextField("Enter name");
                                         textField.setMinWidth(120);
                                         Button button1 = new Button("Button with Text");
-
-                                        button1.setOnAction(new EventHandler<ActionEvent>() {
-                                            @Override
-                                            public void handle(ActionEvent actionEvent) {
-                                                vertex.getText().setText(textField.getText());
-                                            }
-                                        });
 
                                         VBox secondaryLayout = new VBox();
                                         secondaryLayout.getChildren().addAll(secondLabel, textField, button1);
@@ -238,6 +233,14 @@ public class MyControler implements Initializable {
                                         // Set position of second window, related to primary window.
                                         newWindow.setX(stage.getX() + 100);
                                         newWindow.setY(stage.getY() + 100);
+
+                                        button1.setOnAction(new EventHandler<ActionEvent>() {
+                                            @Override
+                                            public void handle(ActionEvent actionEvent) {
+                                                vertex.getText().setText(textField.getText());
+                                                newWindow.close();
+                                            }
+                                        });
 
                                         newWindow.show();
                                     }

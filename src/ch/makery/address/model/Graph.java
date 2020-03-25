@@ -1,5 +1,6 @@
 package ch.makery.address.model;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class Graph {
     }
 
     public void addArc(Arc arc) {
-        matrixAdjancy.get(arc.getBegin().getId()).set(arc.getEnd().getId(),1);
+        matrixAdjancy.get(arc.getBegin().getId()).set(arc.getEnd().getId(), 1);
 
     }
 
@@ -40,8 +41,17 @@ public class Graph {
 
     }
 
-    public void showMultipleArc(ArrayList<Arc> arcs){
+    public void showMultipleArc(ArrayList<Arc> arcs) {
+        for (Arc arc : arcs) {
+            for (Arc arc1 : arcs) {
+                if (arc != arc1 && arc.getBegin().getCircle() == arc1.getBegin().getCircle() && arc.getEnd().getCircle() == arc1.getEnd().getCircle()) {
+                    arc.setColor(Color.RED);
+                    arc1.setColor(Color.RED);
 
+
+                }
+            }
+        }
 
     }
 

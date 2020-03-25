@@ -3,6 +3,7 @@ package ch.makery.address.model;
 
 import ch.makery.address.controller.MyApplication;
 import javafx.beans.InvalidationListener;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import javafx.scene.shape.Line;
@@ -117,6 +118,12 @@ public class Arc extends Line {
 
         this.end = end;
 
+    }
+
+    public void setColor(Color color){
+        this.setStroke(color);
+        line1.setStroke(color);
+        line2.setStroke(color);
     }
 
 }

@@ -19,7 +19,7 @@
           <Menu mnemonicParsing="false" text="Edit">
             <items>
               <MenuItem mnemonicParsing="false" text="getGraph" />
-                  <MenuItem mnemonicParsing="false" text="Nothing" />
+                  <MenuItem fx:id="showMultipleArcBut" mnemonicParsing="false" onAction="#showMultipleArc" text="ShowMultipleArc" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">

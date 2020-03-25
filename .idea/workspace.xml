@@ -2,18 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6dd005ff-e184-421b-b2ee-ae193861c56e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$4$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$4$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$4.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$5.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$6.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$7.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler$7.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/controller/MyControler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ch/makery/address/controller/MyApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ch/makery/address/controller/MyApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/view/PersonOverview.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Graph_Editor/ch/makery/address/view/PersonOverview.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ch/makery/address/controller/MyControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ch/makery/address/controller/MyControler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ch/makery/address/model/Arc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ch/makery/address/model/Arc.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ch/makery/address/model/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ch/makery/address/model/Graph.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ch/makery/address/model/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ch/makery/address/model/Vertex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ch/makery/address/view/PersonOverview.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ch/makery/address/view/PersonOverview.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +100,7 @@
       <workItem from="1584699882218" duration="3765000" />
       <workItem from="1584857745667" duration="26746000" />
       <workItem from="1585054647133" duration="208000" />
-      <workItem from="1585054892163" duration="4008000" />
+      <workItem from="1585054892163" duration="8409000" />
     </task>
     <task id="LOCAL-00001" summary="устранение багов">
       <created>1585039753143</created>
@@ -125,10 +128,10 @@
       <screen x="0" y="0" width="1536" height="821" />
     </state>
     <state x="499" y="165" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1536.821@0.0.1536.821" timestamp="1584108663012" />
-    <state x="574" y="120" key="#com.intellij.ide.util.MemberChooser" timestamp="1585042599312">
+    <state x="574" y="120" key="#com.intellij.ide.util.MemberChooser" timestamp="1585065052418">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state x="574" y="120" key="#com.intellij.ide.util.MemberChooser/0.0.1536.821@0.0.1536.821" timestamp="1585042599312" />
+    <state x="574" y="120" key="#com.intellij.ide.util.MemberChooser/0.0.1536.821@0.0.1536.821" timestamp="1585065052418" />
     <state x="499" y="157" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1584099999592">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
@@ -141,38 +144,38 @@
       <screen x="0" y="0" width="1536" height="821" />
     </state>
     <state x="549" y="165" key="FileChooserDialogImpl/0.0.1536.821@0.0.1536.821" timestamp="1585054983841" />
-    <state width="1493" height="209" key="GridCell.Tab.0.bottom" timestamp="1585061875257">
+    <state width="1493" height="260" key="GridCell.Tab.0.bottom" timestamp="1585067962186">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state width="1493" height="209" key="GridCell.Tab.0.bottom/0.0.1536.821@0.0.1536.821" timestamp="1585061875257" />
-    <state width="1493" height="209" key="GridCell.Tab.0.center" timestamp="1585061875256">
+    <state width="1493" height="260" key="GridCell.Tab.0.bottom/0.0.1536.821@0.0.1536.821" timestamp="1585067962186" />
+    <state width="1493" height="260" key="GridCell.Tab.0.center" timestamp="1585067962186">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state width="1493" height="209" key="GridCell.Tab.0.center/0.0.1536.821@0.0.1536.821" timestamp="1585061875256" />
-    <state width="1493" height="209" key="GridCell.Tab.0.left" timestamp="1585061875256">
+    <state width="1493" height="260" key="GridCell.Tab.0.center/0.0.1536.821@0.0.1536.821" timestamp="1585067962186" />
+    <state width="1493" height="260" key="GridCell.Tab.0.left" timestamp="1585067962185">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state width="1493" height="209" key="GridCell.Tab.0.left/0.0.1536.821@0.0.1536.821" timestamp="1585061875256" />
-    <state width="1493" height="209" key="GridCell.Tab.0.right" timestamp="1585061875256">
+    <state width="1493" height="260" key="GridCell.Tab.0.left/0.0.1536.821@0.0.1536.821" timestamp="1585067962185" />
+    <state width="1493" height="260" key="GridCell.Tab.0.right" timestamp="1585067962186">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state width="1493" height="209" key="GridCell.Tab.0.right/0.0.1536.821@0.0.1536.821" timestamp="1585061875256" />
-    <state width="1493" height="260" key="GridCell.Tab.1.bottom" timestamp="1585054615799">
+    <state width="1493" height="260" key="GridCell.Tab.0.right/0.0.1536.821@0.0.1536.821" timestamp="1585067962186" />
+    <state width="1493" height="260" key="GridCell.Tab.1.bottom" timestamp="1585067970858">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state width="1493" height="260" key="GridCell.Tab.1.bottom/0.0.1536.821@0.0.1536.821" timestamp="1585054615799" />
-    <state width="1493" height="260" key="GridCell.Tab.1.center" timestamp="1585054615799">
+    <state width="1493" height="260" key="GridCell.Tab.1.bottom/0.0.1536.821@0.0.1536.821" timestamp="1585067970858" />
+    <state width="1493" height="260" key="GridCell.Tab.1.center" timestamp="1585067970858">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state width="1493" height="260" key="GridCell.Tab.1.center/0.0.1536.821@0.0.1536.821" timestamp="1585054615799" />
-    <state width="1493" height="260" key="GridCell.Tab.1.left" timestamp="1585054615799">
+    <state width="1493" height="260" key="GridCell.Tab.1.center/0.0.1536.821@0.0.1536.821" timestamp="1585067970858" />
+    <state width="1493" height="260" key="GridCell.Tab.1.left" timestamp="1585067970858">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state width="1493" height="260" key="GridCell.Tab.1.left/0.0.1536.821@0.0.1536.821" timestamp="1585054615799" />
-    <state width="1493" height="260" key="GridCell.Tab.1.right" timestamp="1585054615799">
+    <state width="1493" height="260" key="GridCell.Tab.1.left/0.0.1536.821@0.0.1536.821" timestamp="1585067970858" />
+    <state width="1493" height="260" key="GridCell.Tab.1.right" timestamp="1585067970858">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
-    <state width="1493" height="260" key="GridCell.Tab.1.right/0.0.1536.821@0.0.1536.821" timestamp="1585054615799" />
+    <state width="1493" height="260" key="GridCell.Tab.1.right/0.0.1536.821@0.0.1536.821" timestamp="1585067970858" />
     <state x="277" y="0" key="SettingsEditor" timestamp="1584097935201">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
@@ -197,6 +200,10 @@
       <screen x="0" y="0" width="1536" height="821" />
     </state>
     <state x="330" y="146" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1536.821@0.0.1536.821" timestamp="1584866658748" />
+    <state x="425" y="186" key="run.anything.popup" timestamp="1585068166707">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="425" y="186" key="run.anything.popup/0.0.1536.821@0.0.1536.821" timestamp="1585068166707" />
     <state x="431" y="142" width="672" height="678" key="search.everywhere.popup" timestamp="1585043091711">
       <screen x="0" y="0" width="1536" height="821" />
     </state>
