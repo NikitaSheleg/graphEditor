@@ -30,9 +30,9 @@ import javafx.fxml.Initializable;
 
 import javafx.scene.Cursor;
 
-import javafx.scene.control.Button;
+import javafx.scene.Scene;
 
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 
 import javafx.scene.image.Image;
 
@@ -40,11 +40,26 @@ import javafx.scene.image.ImageView;
 
 import javafx.scene.input.*;
 
+import javafx.scene.layout.Pane;
+
+import javafx.scene.layout.StackPane;
+
+import javafx.scene.layout.VBox;
+
 import javafx.scene.paint.Color;
 
 import javafx.scene.shape.Circle;
 
+import javafx.scene.text.Text;
+
 import javafx.scene.transform.Translate;
+
+import javafx.stage.Modality;
+
+import javafx.stage.Stage;
+
+
+import javax.swing.*;
 
 
 public class MyControler implements Initializable {
@@ -56,6 +71,12 @@ public class MyControler implements Initializable {
     public static int countCircle = 0;
 
     public Graph graph = new Graph();
+
+
+    private Pane pane;
+
+
+    public static Stage stage;
 
 
     private double x1, x2 = 0;
@@ -75,6 +96,16 @@ public class MyControler implements Initializable {
 
     @FXML
 
+    private MenuItem showMultipleArcBut = new MenuItem();
+
+
+    @FXML
+
+    private MenuItem newPane = new MenuItem();
+
+
+    @FXML
+
     private Button penLine = new Button();
 
 
@@ -83,23 +114,33 @@ public class MyControler implements Initializable {
     private Button transform = new Button();
 
 
+    @FXML
+
+    private Button unorientedArc = new Button();
+
+
+    @FXML
+
+    private TabPane tabPane = new TabPane();
+
+
+    @FXML
+
+    private Tab tab = new Tab();
+
+
+    private List<Pane> panes = new ArrayList<>();
+
     private ArrayList<Circle> circleArray = new ArrayList<>();
 
     private ArrayList<Arc> arcArray = new ArrayList<>();
+
+    List<Vertex> vertices = new ArrayList<>();
 
 
     @Override
 
     public void initialize(URL location, ResourceBundle resources) {
-
-        ToolBar toolBar = new ToolBar();
-
-        toolBar.getItems().add(penCircle);
-
-        toolBar.getItems().add(penLine);
-
-        toolBar.getItems().add(transform);
-
 
         InputStream input =
 
@@ -111,16 +152,56 @@ public class MyControler implements Initializable {
         ImageView imageView = new ImageView(image);
 
 
-        penCircle.graphicProperty().setValue(imageView);
+        pane = new Pane();
+
+        tabPane.getTabs().get(0).setContent(pane);
+
+
+        panes.add(pane);
+
+
+        //Image for button
+
+       /* penCircle.graphicProperty().setValue(imageView);
 
         penLine.graphicProperty().setValue(imageView);
 
         transform.graphicProperty().setValue(imageView);
 
+        unorientedArc.graphicProperty().setValue(imageView);*/
+
         // TODO (don't really need to do anything here).
 
 
         System.out.println("Hi");
+
+
+    }
+
+
+    public void showMultipleArc(ActionEvent event) {
+
+        graph.showMultipleArc(arcArray);
+
+
+    }
+
+
+    public void newPaneAction(ActionEvent event) {
+
+        Tab tab1 = new Tab("New File");
+
+        Label label = new Label("This is newTab ");
+
+        tab1.setContent(label);
+
+        tabPane.getTabs().add(tab1);
+
+        Pane pane = new Pane();
+
+        panes.add(pane);
+
+        tabPane.getTabs().get(tabPane.getTabs().size() - 1).setContent(pane);
 
 
     }
@@ -137,8 +218,13 @@ public class MyControler implements Initializable {
         penLine.setDisable(false);
 
         transform.setDisable(false);
+        unorientedArc.setDisable(false);
 
-        MyApplication.scene.addEventFilter(MouseEvent.MOUSE_CLICKED, drawCircle);
+        for (Tab tab1 : tabPane.getTabs()) {
+
+            tab1.getContent().addEventFilter(MouseEvent.MOUSE_CLICKED, drawCircle);
+
+        }
 
         for (Circle circle : circleArray) {
 
@@ -164,6 +250,8 @@ public class MyControler implements Initializable {
 
         transform.setDisable(false);
 
+        unorientedArc.setDisable(false);
+
         for (Circle circle : circleArray) {
 
             circle.setOnMousePressed(null);
@@ -179,10 +267,6 @@ public class MyControler implements Initializable {
             circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
 
         }
-
-
-        graph.showMultipleArc(arcArray);
-
 
     }
 
@@ -230,9 +314,40 @@ public class MyControler implements Initializable {
 
         transform.setDisable(true);
 
+        unorientedArc.setDisable(false);
 
         thread.run();
 
+
+    }
+
+
+    public void unorientedArcAction(ActionEvent actionEvent) {
+        MyApplication.scene.setCursor(Cursor.CROSSHAIR);
+
+        penCircle.setDisable(false);
+
+        penLine.setDisable(false);
+
+        transform.setDisable(false);
+
+        unorientedArc.setDisable(true);
+
+        for (Circle circle : circleArray) {
+
+            circle.setOnMousePressed(null);
+
+            circle.setOnMouseDragged(null);
+
+        }
+
+        graph.showMatrix();
+
+        for (Circle circle : circleArray) {
+
+            circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
+
+        }
 
     }
 
@@ -250,8 +365,6 @@ public class MyControler implements Initializable {
     };
 
 
-    List<Vertex> vertices = new ArrayList<>();
-
     //Ивент рисования круга
 
     EventHandler<MouseEvent> drawCircle = new EventHandler<MouseEvent>() {
@@ -260,7 +373,7 @@ public class MyControler implements Initializable {
 
         public void handle(MouseEvent e) {
 
-            if (penCircle.isDisable() && e.getX() > 55 && e.getY() > 44) {
+            if (penCircle.isDisable() && e.getX() < 550 && e.getY() < 400) {
 
                 Circle circle = new Circle();
 
@@ -285,17 +398,28 @@ public class MyControler implements Initializable {
 
                 vertices.add(vertex);
 
+                vertex.setTextInPane();
+
                 circle.setAccessibleText("str");
 
 
                 vertex.setId(countCircle);
 
+                vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
+
+                vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
+
                 graph.addVertex(circleArray);
 
+                for (Pane pane1 : panes) {
+
+                    pane1.getChildren().add(circle);
+
+                }
+
+                // panes.get(1).getChildren().add(circle);
+
                 countCircle++;
-
-
-                MyApplication.pane.getChildren().add(circle);
 
 
             }
@@ -317,13 +441,89 @@ public class MyControler implements Initializable {
 
                     if (transform.isDisable()) {
 
-                        orgSceneX = t.getSceneX();
+                        Circle circle = (Circle) t.getSource();
 
-                        orgSceneY = t.getSceneY();
 
-                        orgTranslateX = ((Circle) (t.getSource())).getTranslateX();
+                        for (Vertex vertex : vertices) {
 
-                        orgTranslateY = ((Circle) (t.getSource())).getTranslateY();
+                            vertex.getCircle().setFill(Color.WHITE);
+
+                            if (vertex.getCircle() == circle) {
+
+                                vertex.getCircle().setFill(Color.GREEN);
+
+                                vertex.getCircle().getScene().setOnKeyPressed(e -> {
+
+                                    if (e.getCode() == KeyCode.I) {
+
+                                        Label secondLabel = new Label("Enter name vertex");
+
+                                        TextField textField = new TextField("Enter name");
+
+                                        textField.setMinWidth(120);
+
+                                        Button button1 = new Button("Button with Text");
+
+
+                                        VBox secondaryLayout = new VBox();
+
+                                        secondaryLayout.getChildren().addAll(secondLabel, textField, button1);
+
+
+                                        Scene secondScene = new Scene(secondaryLayout, 230, 100);
+
+
+                                        // New window (Stage)
+
+                                        Stage newWindow = new Stage();
+
+                                        newWindow.setTitle("Enter name");
+
+                                        newWindow.setScene(secondScene);
+
+
+                                        // Specifies the modality for new window.
+
+                                        newWindow.initModality(Modality.WINDOW_MODAL);
+
+
+                                        // Specifies the owner Window (parent) for new window
+
+                                        newWindow.initOwner(stage);
+
+
+                                        // Set position of second window, related to primary window.
+
+                                        newWindow.setX(stage.getX() + 100);
+
+                                        newWindow.setY(stage.getY() + 100);
+
+
+                                        button1.setOnAction(new EventHandler<ActionEvent>() {
+
+                                            @Override
+
+                                            public void handle(ActionEvent actionEvent) {
+
+                                                vertex.getText().setText(textField.getText());
+
+                                                newWindow.close();
+
+                                            }
+
+                                        });
+
+
+                                        newWindow.show();
+
+                                    }
+
+                                });
+
+                            }
+
+                        }
+
 
                     }
 
@@ -343,11 +543,16 @@ public class MyControler implements Initializable {
 
                     Circle circle = (Circle) t.getSource();
 
-                    circle.setCenterX(t.getSceneX());
+                    circle.setCenterX(t.getX());
 
-                    circle.setCenterY(t.getSceneY());
+                    circle.setCenterY(t.getY());
+
 
                     for (Vertex vertex : vertices) {
+
+                        vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
+
+                        vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
 
                         if (vertex.getCircle() == circle && vertex.getArcs() != null) {
 
@@ -368,9 +573,11 @@ public class MyControler implements Initializable {
                                 }
 
                                 arc.updateArrow();
+
                             }
 
                         }
+
 
                     }
 
@@ -388,22 +595,19 @@ public class MyControler implements Initializable {
 
         public void handle(MouseEvent t) {
 
-            if (penLine.isDisable()) {
-
+            if (penLine.isDisable() || unorientedArc.isDisable()) {
 
                 if (x1 == 0 && y1 == 0) {
 
                     Circle circle = (Circle) t.getSource();
 
-
                     for (Vertex vertex : vertices) {
 
                         if (vertex.getCircle() == circle) {
 
-                            x1 = t.getSceneX();
+                            x1 = t.getX();
 
-                            y1 = t.getSceneY();
-
+                            y1 = t.getY();
 
                             arc.setBegin(vertex);
 
@@ -417,14 +621,13 @@ public class MyControler implements Initializable {
 
                     }
 
-
                 } else {
 
                     if (x2 == 0 && y2 == 0) {
 
-                        x2 = t.getSceneX();
+                        x2 = t.getX();
 
-                        y2 = t.getSceneY();
+                        y2 = t.getY();
 
                         Circle circle = (Circle) (t.getSource());
 
@@ -436,17 +639,20 @@ public class MyControler implements Initializable {
 
                                 arc.setEnd(vertex);
 
-
                                 arc.setEndX(vertex.getCircle().getCenterX());
 
                                 arc.setEndY(vertex.getCircle().getCenterY());
 
-                                arc.setArrow();
 
                                 arcArray.add(arc);
 
 
                                 //dобавил немножко от себя
+
+                                //Изменение цвета
+
+/*
+
 
 
                                 if (arc.getBegin().getCircle().getFill() == Color.WHITE) {
@@ -473,12 +679,26 @@ public class MyControler implements Initializable {
 
                                 }
 
+*/
+
+
                                 arc.setStrokeWidth(2);
 
                                 graph.addArc(arc);
 
+                                for (Pane pane1 : panes) {
 
-                                MyApplication.pane.getChildren().add(arc);
+                                    pane1.getChildren().add(arc);
+                                    if (penLine.isDisable()) {
+                                        arc.setArrow(pane1);
+                                    } else if (unorientedArc.isDisable()) {
+                                        arc.setUnorientedArrow(pane1);
+                                        arc.updateUnorientedArrow();
+                                    }
+
+                                }
+
+                                // panes.get(0).getChildren().add(arc);
 
                                 x1 = 0;
 
@@ -488,6 +708,8 @@ public class MyControler implements Initializable {
 
                                 y2 = 0;
                                 arc.updateArrow();
+                                //  arc.updateUnorientedArrow();
+
 
                                 this.arc = new Arc(x1, y1, x2, y2);
 
@@ -495,12 +717,9 @@ public class MyControler implements Initializable {
 
                         }
 
-
                     }
 
-
                 }
-
 
             }
 
@@ -552,13 +771,19 @@ public class MyControler implements Initializable {
 
                 public void handle(MouseEvent t) {
 
+                    for (Vertex vertex : vertices) {
+
+                        vertex.getCircle().setFill(Color.WHITE);
+
+                    }
+
                     Arc arc = (Arc) t.getSource();
 
-                    if (Math.abs(t.getSceneX() - arc.getStartX()) < 25 && Math.abs(t.getSceneY() - arc.getStartY()) < 25) {
+                    if (Math.abs(t.getX() - arc.getStartX()) < 25 && Math.abs(t.getY() - arc.getStartY()) < 25) {
 
-                        arc.setStartX(t.getSceneX());
+                        arc.setStartX(t.getX());
 
-                        arc.setStartY(t.getSceneY());
+                        arc.setStartY(t.getY());
 
                         for (Vertex vertex : vertices) {
 
@@ -576,11 +801,11 @@ public class MyControler implements Initializable {
 
                         }
 
-                    } else if (Math.abs(t.getSceneX() - arc.getEndX()) < 25 && Math.abs(t.getSceneY() - arc.getEndY()) < 25) {
+                    } else if (Math.abs(t.getX() - arc.getEndX()) < 25 && Math.abs(t.getY() - arc.getEndY()) < 25) {
 
-                        arc.setEndX(t.getSceneX());
+                        arc.setEndX(t.getX());
 
-                        arc.setEndY(t.getSceneY());
+                        arc.setEndY(t.getY());
 
                         for (Vertex vertex : vertices) {
 
@@ -600,10 +825,13 @@ public class MyControler implements Initializable {
                         }
 
                     }
+
+
                     arc.updateArrow();
 
                 }
 
             };
+
 
 }
