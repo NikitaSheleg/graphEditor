@@ -21,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -30,14 +31,17 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javax.swing.*;
+
 public class MyControler implements Initializable {
     private final float CIRCLE_RADIUS = 10.0f;
     private Translate translate = new Translate();
     public static int countCircle = 0;
     public Graph graph = new Graph();
 
-    public static Stage stage;
+    private Pane pane;
 
+    public static Stage stage;
 
     private double x1, x2 = 0;
     private double y1, y2 = 0;
@@ -52,11 +56,24 @@ public class MyControler implements Initializable {
     private MenuItem showMultipleArcBut = new MenuItem();
 
     @FXML
+    private MenuItem newPane = new MenuItem();
+
+    @FXML
     private Button penLine = new Button();
 
     @FXML
     private Button transform = new Button();
 
+    @FXML
+    private Button unorientedArc = new Button();
+
+    @FXML
+    private TabPane tabPane = new TabPane();
+
+    @FXML
+    private Tab tab = new Tab();
+
+    private List<Pane> panes = new ArrayList<>();
     private ArrayList<Circle> circleArray = new ArrayList<>();
     private ArrayList<Arc> arcArray = new ArrayList<>();
     List<Vertex> vertices = new ArrayList<>();
@@ -64,21 +81,23 @@ public class MyControler implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ToolBar toolBar = new ToolBar();
-        toolBar.getItems().add(penCircle);
-        toolBar.getItems().add(penLine);
-        toolBar.getItems().add(transform);
-
         InputStream input =
                 getClass().getResourceAsStream("/ch/makery/address/view/circle.png");
 
         Image image = new Image(input);
         ImageView imageView = new ImageView(image);
 
+        pane = new Pane();
+        tabPane.getTabs().get(0).setContent(pane);
 
-        penCircle.graphicProperty().setValue(imageView);
+        panes.add(pane);
+
+
+        //Image for button
+       /* penCircle.graphicProperty().setValue(imageView);
         penLine.graphicProperty().setValue(imageView);
         transform.graphicProperty().setValue(imageView);
+        unorientedArc.graphicProperty().setValue(imageView);*/
         // TODO (don't really need to do anything here).
 
         System.out.println("Hi");
@@ -86,18 +105,32 @@ public class MyControler implements Initializable {
 
     }
 
-    public void  showMultipleArc(ActionEvent event) {
+    public void showMultipleArc(ActionEvent event) {
         graph.showMultipleArc(arcArray);
 
 
     }
+
+    public void newPaneAction(ActionEvent event) {
+        Tab tab1 = new Tab("New File");
+        Label label = new Label("This is newTab ");
+        tab1.setContent(label);
+        tabPane.getTabs().add(tab1);
+        Pane pane = new Pane();
+        panes.add(pane);
+        tabPane.getTabs().get(tabPane.getTabs().size()-1).setContent(pane);
+
+    }
+
     // Ивент нажатия кнопки
     public void penCircleAction(ActionEvent event) {
         MyApplication.scene.setCursor(Cursor.DEFAULT);
         penCircle.setDisable(true);
         penLine.setDisable(false);
         transform.setDisable(false);
-        MyApplication.scene.addEventFilter(MouseEvent.MOUSE_CLICKED, drawCircle);
+        for (Tab tab1 : tabPane.getTabs()) {
+            tab1.getContent().addEventFilter(MouseEvent.MOUSE_CLICKED, drawCircle);
+        }
         for (Circle circle : circleArray) {
             circle.setOnMousePressed(null);
             circle.setOnMouseDragged(null);
@@ -151,6 +184,11 @@ public class MyControler implements Initializable {
 
     }
 
+    public void unorientedArcAction(ActionEvent actionEvent) {
+
+
+    }
+
 
     EventHandler<MouseEvent> trans = new EventHandler<MouseEvent>() {
         @Override
@@ -164,11 +202,11 @@ public class MyControler implements Initializable {
     EventHandler<MouseEvent> drawCircle = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent e) {
-            if (penCircle.isDisable() && e.getX() > 55 && e.getY() > 44) {
+            if (penCircle.isDisable() && e.getX() < 550 && e.getY() < 400) {
                 Circle circle = new Circle();
                 circleArray.add(circle);
-                circle.setCenterX(e.getX());
-                circle.setCenterY(e.getY());
+                circle.setCenterX(e.getX() );
+                circle.setCenterY(e.getY() );
                 circle.setRadius(CIRCLE_RADIUS);
                 circle.setStroke(Color.GREEN);
                 circle.setPickOnBounds(true);
@@ -184,10 +222,12 @@ public class MyControler implements Initializable {
                 vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
                 vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
                 graph.addVertex(circleArray);
+                for (Pane pane1 : panes){
+                    pane1.getChildren().add(circle);
+                }
+               // panes.get(1).getChildren().add(circle);
                 countCircle++;
 
-
-                MyApplication.pane.getChildren().add(circle);
 
             }
 
@@ -260,7 +300,7 @@ public class MyControler implements Initializable {
                 public void handle(MouseEvent t) {
                     Circle circle = (Circle) t.getSource();
                     circle.setCenterX(t.getSceneX());
-                    circle.setCenterY(t.getSceneY());
+                    circle.setCenterY(t.getSceneY() - 58);
 
                     for (Vertex vertex : vertices) {
                         vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
@@ -312,7 +352,7 @@ public class MyControler implements Initializable {
                                 arc.setEnd(vertex);
                                 arc.setEndX(vertex.getCircle().getCenterX());
                                 arc.setEndY(vertex.getCircle().getCenterY());
-                                arc.setArrow();
+                                arc.setArrow(panes.get(0));
                                 arcArray.add(arc);
 
                                 //dобавил немножко от себя
@@ -336,7 +376,7 @@ public class MyControler implements Initializable {
                                 arc.setStrokeWidth(2);
                                 graph.addArc(arc);
 
-                                MyApplication.pane.getChildren().add(arc);
+                                panes.get(0).getChildren().add(arc);
                                 x1 = 0;
                                 x2 = 0;
                                 y1 = 0;
@@ -377,9 +417,9 @@ public class MyControler implements Initializable {
                         vertex.getCircle().setFill(Color.WHITE);
                     }
                     Arc arc = (Arc) t.getSource();
-                    if (Math.abs(t.getSceneX() - arc.getStartX()) < 25 && Math.abs(t.getSceneY() - arc.getStartY()) < 25) {
-                        arc.setStartX(t.getSceneX());
-                        arc.setStartY(t.getSceneY());
+                    if (Math.abs(t.getX() - arc.getStartX()) < 25 && Math.abs(t.getY() - arc.getStartY()) < 25) {
+                        arc.setStartX(t.getX());
+                        arc.setStartY(t.getY());
                         for (Vertex vertex : vertices) {
                             if (Math.abs(arc.getStartX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getStartY() - vertex.getCircle().getCenterY()) < 15) {
                                 arc.setStartX(vertex.getCircle().getCenterX());
@@ -388,9 +428,9 @@ public class MyControler implements Initializable {
                                 vertex.addArc(arc);
                             }
                         }
-                    } else if (Math.abs(t.getSceneX() - arc.getEndX()) < 25 && Math.abs(t.getSceneY() - arc.getEndY()) < 25) {
-                        arc.setEndX(t.getSceneX());
-                        arc.setEndY(t.getSceneY());
+                    } else if (Math.abs(t.getX() - arc.getEndX()) < 25 && Math.abs(t.getY() - arc.getEndY()) < 25) {
+                        arc.setEndX(t.getX());
+                        arc.setEndY(t.getY());
                         for (Vertex vertex : vertices) {
                             if (Math.abs(arc.getEndX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getEndY() - vertex.getCircle().getCenterY()) < 15) {
                                 arc.setEndX(vertex.getCircle().getCenterX());
@@ -405,6 +445,8 @@ public class MyControler implements Initializable {
                     arc.updateArrow();
                 }
             };
+
+
 }
 
 

@@ -4,8 +4,10 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.makery.address.controller.MyControler">
    <children>
@@ -14,6 +16,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem fx:id="newPane" mnemonicParsing="false" onAction="#newPaneAction" text="New  Pane" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -29,9 +32,27 @@
           </Menu>
         </menus>
       </MenuBar>
-      <SplitPane layoutX="46.0" layoutY="27.0" prefHeight="374.0" prefWidth="555.0" AnchorPane.leftAnchor="46.0" AnchorPane.topAnchor="27.0" />
-      <Button fx:id="transform" layoutY="146.0" mnemonicParsing="false" onAction="#transformAction" prefHeight="36.0" prefWidth="36.0" />
-      <Button fx:id="penLine" layoutY="106.0" mnemonicParsing="false" onAction="#penLineAction" prefHeight="36.0" prefWidth="36.0" AnchorPane.topAnchor="106.0" />
-      <Button fx:id="penCircle" layoutY="66.0" mnemonicParsing="false" onAction="#penCircleAction" prefHeight="36.0" prefWidth="36.0" />
+      <Button fx:id="transform" layoutX="552.0" layoutY="166.0" mnemonicParsing="false" onAction="#transformAction" prefHeight="36.0" prefWidth="36.0" text="Transform">
+         <font>
+            <Font size="7.0" />
+         </font></Button>
+      <Button fx:id="penLine" layoutX="552.0" layoutY="94.0" mnemonicParsing="false" onAction="#penLineAction" prefHeight="36.0" prefWidth="36.0" text="Arc" AnchorPane.topAnchor="94.0">
+         <font>
+            <Font size="7.0" />
+         </font></Button>
+      <Button fx:id="penCircle" layoutX="552.0" layoutY="58.0" mnemonicParsing="false" onAction="#penCircleAction" prefHeight="36.0" prefWidth="36.0" text="Circle">
+         <font>
+            <Font size="7.0" />
+         </font></Button>
+      <Button fx:id="unorientedArc" layoutX="552.0" layoutY="130.0" mnemonicParsing="false" onAction="#unorientedArcAction" prefHeight="36.0" prefWidth="36.0" text="BiArc">
+         <font>
+            <Font size="7.0" />
+         </font>
+      </Button>
+      <TabPane fx:id="tabPane" layoutY="27.0" prefHeight="374.0" prefWidth="552.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="27.0">
+        <tabs>
+          <Tab fx:id="tab" text="New File" />
+        </tabs>
+      </TabPane>
    </children>
 </AnchorPane>

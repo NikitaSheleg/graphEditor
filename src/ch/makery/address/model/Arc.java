@@ -3,6 +3,7 @@ package ch.makery.address.model;
 
 import ch.makery.address.controller.MyApplication;
 import javafx.beans.InvalidationListener;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -30,11 +31,11 @@ public class Arc extends Line {
     Line line1 = new Line();
     Line line2 = new Line();
 
-    public void setArrow() {
+    public void setArrow(Pane pane) {
         line1.setStrokeWidth(2);
         line2.setStrokeWidth(2);
-        MyApplication.pane.getChildren().add(line1);
-        MyApplication.pane.getChildren().add(line2);
+        pane.getChildren().add(line1);
+        pane.getChildren().add(line2);
     }
 
     public void updateArrow() {
