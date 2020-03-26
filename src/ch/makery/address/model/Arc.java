@@ -15,8 +15,10 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventListener;
+import java.util.List;
 
 
 public class Arc extends Line {
@@ -32,6 +34,7 @@ public class Arc extends Line {
     private Line line3;
     private Line line4;
 
+    private List<Line> lineList = new ArrayList<>();
 
     Runnable binaryRunnable = () -> {
         InvalidationListener updater = o -> {
@@ -81,11 +84,18 @@ public class Arc extends Line {
         updater.invalidated(null);
     };
 
+    public List<Line> getArrow() {
+        return lineList;
+    }
 
     public void setUnorientedArrow(Pane pane) {
         setArrow(pane);
+
         line3 = new Line();
         line4 = new Line();
+
+        lineList.add(line3);
+        lineList.add(line4);
         line3.setStrokeWidth(2);
         line4.setStrokeWidth(2);
         pane.getChildren().add(line3);
@@ -97,7 +107,8 @@ public class Arc extends Line {
     }
 
     public void setArrow(Pane pane) {
-
+        lineList.add(line1);
+        lineList.add(line2);
         line1.setStrokeWidth(2);
 
         line2.setStrokeWidth(2);
@@ -128,8 +139,8 @@ public class Arc extends Line {
                 line2.setStartX(ex);
                 line2.setStartY(ey);
             } else {
-                double factor = 10 / Math.hypot(sx - ex, sy - ey);
-                double factorO = 10 / Math.hypot(sx - ex, sy - ey);
+                double factor = 5 / Math.hypot(sx - ex, sy - ey);
+                double factorO = 5 / Math.hypot(sx - ex, sy - ey);
 
                 // part in direction of main line
                 double dx = (sx - ex) * factor;
@@ -166,6 +177,7 @@ public class Arc extends Line {
 
         super(x1, y1, x2, y2);
         this.setStrokeLineCap(StrokeLineCap.ROUND);
+
 
     }
 

@@ -13,7 +13,7 @@ public class Vertex {
     private Circle circle;
     private int id;
     private Text text = new Text();
-
+    private List<Arc> arcs = new ArrayList<>();
 
 
     public Text getText() {
@@ -23,13 +23,11 @@ public class Vertex {
     }
 
 
-
-    public void setTextInPane(Pane pane){
+    public void setTextInPane(Pane pane) {
 
         pane.getChildren().add(text);
 
     }
-
 
 
     public void setText(Text text) {
@@ -37,6 +35,7 @@ public class Vertex {
         this.text = text;
 
     }
+
     public int getId() {
         return id;
     }
@@ -45,7 +44,9 @@ public class Vertex {
         this.id = id;
     }
 
-    private List<Arc> arcs = new ArrayList<>();
+    public void removeArc(Arc arc) {
+        arcs.remove(arc);
+    }
 
     public void addArc(Arc arc) {
         arcs.add(arc);

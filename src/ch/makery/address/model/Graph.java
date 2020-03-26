@@ -16,6 +16,12 @@ public class Graph {
     private List<Vertex> vertices = new ArrayList<>();
     private Tab tab;
 
+    public void removeVertex(Vertex vertex) {
+        vertices.remove(vertex);
+        matrixAdjancy.get(vertex.getId()).remove(vertex.getId());
+        matrixAdjancy.remove(vertex.getId());
+    }
+
     public Tab getTab() {
         return tab;
     }
@@ -53,6 +59,12 @@ public class Graph {
     }
 
 
+    public void removeArcFromMatrix(Arc arc) {
+        matrixAdjancy.get(arc.getBegin().getId()).set(arc.getEnd().getId(), 0);
+
+        matrixAdjancy.get(arc.getEnd().getId()).set(arc.getBegin().getId(), 0);
+
+    }
 
     public void addArc(Arc arc) {
         matrixAdjancy.get(arc.getBegin().getId()).set(arc.getEnd().getId(), 1);
@@ -76,7 +88,7 @@ public class Graph {
 
         }
 
-
+        System.out.println();
     }
 
 

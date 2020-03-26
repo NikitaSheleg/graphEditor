@@ -5,8 +5,6 @@ import java.io.InputStream;
 
 import java.net.URL;
 
-import java.security.spec.MGF1ParameterSpec;
-
 import java.util.ArrayList;
 
 import java.util.List;
@@ -42,15 +40,11 @@ import javafx.scene.input.*;
 
 import javafx.scene.layout.Pane;
 
-import javafx.scene.layout.StackPane;
-
 import javafx.scene.layout.VBox;
 
 import javafx.scene.paint.Color;
 
 import javafx.scene.shape.Circle;
-
-import javafx.scene.text.Text;
 
 import javafx.scene.transform.Translate;
 
@@ -59,16 +53,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
-import javax.swing.*;
-
-
 public class MyControler implements Initializable {
 
     private final float CIRCLE_RADIUS = 10.0f;
 
     private Translate translate = new Translate();
 
-    public  int countCircle = 0;
+    public int countCircle = 0;
 
     private Graph graph;
     private Pane pane;
@@ -400,7 +391,7 @@ public class MyControler implements Initializable {
                         vertex.setTextInPane((Pane) graph.getTab().getContent());
 
 
-                        vertex.setId(graph.getVertices().size()-1);
+                        vertex.setId(graph.getVertices().size() - 1);
 
                         vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
 
@@ -512,6 +503,16 @@ public class MyControler implements Initializable {
 
 
                                                 newWindow.show();
+
+                                            } else if (e.getCode() == KeyCode.DELETE) {
+                                                Pane pane = (Pane) graph.getTab().getContent();
+                                                pane.getChildren().remove(vertex.getCircle());
+                                                for (Arc arc : vertex.getArcs()) {
+                                                    graph.removeArcFromMatrix(arc);
+                                                    pane.getChildren().removeAll(arc.getArrow());
+                                                }
+                                                pane.getChildren().removeAll(vertex.getArcs());
+                                                graph.removeVertex(vertex);
 
                                             }
 
@@ -656,8 +657,6 @@ public class MyControler implements Initializable {
                                         vertex.getArcs().add(arc);
 
 
-
-
                                         graph.addArc(arc);
 
 
@@ -761,7 +760,8 @@ public class MyControler implements Initializable {
                             arc.setStartX(t.getX());
 
                             arc.setStartY(t.getY());
-
+                            graph.removeArcFromMatrix(arc);
+                            arc.getBegin().removeArc(arc);
                             for (Vertex vertex : graph.getVertices()) {
 
                                 if (Math.abs(arc.getStartX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getStartY() - vertex.getCircle().getCenterY()) < 15) {
@@ -783,7 +783,8 @@ public class MyControler implements Initializable {
                             arc.setEndX(t.getX());
 
                             arc.setEndY(t.getY());
-
+                            graph.removeArcFromMatrix(arc);
+                            arc.getEnd().removeArc(arc);
                             for (Vertex vertex : graph.getVertices()) {
 
                                 if (Math.abs(arc.getEndX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getEndY() - vertex.getCircle().getCenterY()) < 15) {
@@ -803,7 +804,7 @@ public class MyControler implements Initializable {
 
                         }
 
-
+                        graph.addArc(arc);
                         arc.updateArrow();
 
                     }
