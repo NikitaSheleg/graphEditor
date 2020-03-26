@@ -4,7 +4,6 @@ package ch.makery.address.model;
 import ch.makery.address.controller.MyApplication;
 import javafx.beans.InvalidationListener;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import javafx.scene.shape.Line;
@@ -16,30 +15,112 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventListener;
+import java.util.List;
 
 
 public class Arc extends Line {
 
 
-    Vertex begin;
+    private Vertex begin;
 
-    Vertex end;
+    private Vertex end;
 
     int weight;
-    Line line1 = new Line();
-    Line line2 = new Line();
+    private Line line1 = new Line();
+    private Line line2 = new Line();
+    private Line line3;
+    private Line line4;
 
-    public void setArrow(Pane pane) {
-        line1.setStrokeWidth(2);
-        line2.setStrokeWidth(2);
-        pane.getChildren().add(line1);
-        pane.getChildren().add(line2);
+    private List<Line> lineList = new ArrayList<>();
+
+    Runnable binaryRunnable = () -> {
+        InvalidationListener updater = o -> {
+            double ex = getStartX();
+            double ey = getStartY();
+            double sx = getEndX();
+            double sy = getEndY();
+
+
+            line3.setEndX(ex);
+            line3.setEndY(ey);
+            line4.setEndX(ex);
+            line4.setEndY(ey);
+
+
+            if (ex == sx && ey == sy) {
+                // arrow parts of length 0
+                line3.setStartX(ex);
+                line3.setStartY(ey);
+                line4.setStartX(ex);
+                line4.setStartY(ey);
+
+            } else {
+                double factor = 10 / Math.hypot(sx - ex, sy - ey);
+                double factorO = 10 / Math.hypot(sx - ex, sy - ey);
+
+                // part in direction of main line
+                double dx = (sx - ex) * factor;
+                double dy = (sy - ey) * factor;
+
+                // part ortogonal to main line
+                double ox = (sx - ex) * factorO;
+                double oy = (sy - ey) * factorO;
+
+                line3.setStartX(ex + dx - oy);
+                line3.setStartY(ey + dy + ox);
+                line4.setStartX(ex + dx + oy);
+                line4.setStartY(ey + dy - ox);
+            }
+        };
+
+        // add updater to properties
+        startXProperty().addListener(updater);
+        startYProperty().addListener(updater);
+        endXProperty().addListener(updater);
+        endYProperty().addListener(updater);
+        updater.invalidated(null);
+    };
+
+    public List<Line> getArrow() {
+        return lineList;
     }
 
-    public void updateArrow() {
+    public void setUnorientedArrow(Pane pane) {
+        setArrow(pane);
 
+        line3 = new Line();
+        line4 = new Line();
+
+        lineList.add(line3);
+        lineList.add(line4);
+        line3.setStrokeWidth(2);
+        line4.setStrokeWidth(2);
+        pane.getChildren().add(line3);
+        pane.getChildren().add(line4);
+    }
+
+    public boolean isUnoriented() {
+        return line3 != null && line4 != null;
+    }
+
+    public void setArrow(Pane pane) {
+        lineList.add(line1);
+        lineList.add(line2);
+        line1.setStrokeWidth(2);
+
+        line2.setStrokeWidth(2);
+
+        pane.getChildren().add(line1);
+
+        pane.getChildren().add(line2);
+
+    }
+
+
+    Runnable runnable = () -> {
         InvalidationListener updater = o -> {
             double ex = getEndX();
             double ey = getEndY();
@@ -58,8 +139,8 @@ public class Arc extends Line {
                 line2.setStartX(ex);
                 line2.setStartY(ey);
             } else {
-                double factor = 10 / Math.hypot(sx - ex, sy - ey);
-                double factorO = 10 / Math.hypot(sx - ex, sy - ey);
+                double factor = 5 / Math.hypot(sx - ex, sy - ey);
+                double factorO = 5 / Math.hypot(sx - ex, sy - ey);
 
                 // part in direction of main line
                 double dx = (sx - ex) * factor;
@@ -82,14 +163,21 @@ public class Arc extends Line {
         endXProperty().addListener(updater);
         endYProperty().addListener(updater);
         updater.invalidated(null);
+    };
 
+    public void updateArrow() {
+        runnable.run();
+    }
 
+    public void updateUnorientedArrow() {
+        binaryRunnable.run();
     }
 
     public Arc(double x1, double y1, double x2, double y2) {
 
         super(x1, y1, x2, y2);
         this.setStrokeLineCap(StrokeLineCap.ROUND);
+
 
     }
 
@@ -119,12 +207,6 @@ public class Arc extends Line {
 
         this.end = end;
 
-    }
-
-    public void setColor(Color color){
-        this.setStroke(color);
-        line1.setStroke(color);
-        line2.setStroke(color);
     }
 
 }

@@ -15,8 +15,11 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
                   <MenuItem fx:id="newPane" mnemonicParsing="false" onAction="#newPaneAction" text="New  Pane" />
+                  <MenuItem fx:id="save" mnemonicParsing="false" onAction="#saveAction" text="Save" />
+                  <MenuItem fx:id="saveAs" mnemonicParsing="false" onAction="#saveAsAction" text="Save as" />
+                  <MenuItem fx:id="open" mnemonicParsing="false" onAction="#openAction" text="Open" />
+              <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">

@@ -30,10 +30,25 @@ public class MyApplication extends Application {
             pane = new Pane();
             pane.getChildren().add(root);
             scene = new Scene(pane);
+            MyControler.stage = primaryStage;
             primaryStage.setTitle("My Application");
             primaryStage.setScene(scene);
             primaryStage.show();
-            MyControler.stage = primaryStage;
+
+
+            /*EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent e) {
+                    System.out.println("Hello World");
+                   // scene.setCursor(Cursor.CROSSHAIR);
+
+                }
+            };
+
+            scene.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);*/
+
+
+            //Creating the mouse event handler
 
         } catch (Exception e) {
             e.printStackTrace();
