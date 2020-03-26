@@ -67,6 +67,7 @@ public class Graph {
     }
 
     public void addArc(Arc arc) {
+        System.out.println(arc.isUnoriented());
         matrixAdjancy.get(arc.getBegin().getId()).set(arc.getEnd().getId(), 1);
 
         matrixAdjancy.get(arc.getEnd().getId()).set(arc.getBegin().getId(), 1);

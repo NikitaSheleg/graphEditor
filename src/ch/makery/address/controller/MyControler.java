@@ -657,7 +657,7 @@ public class MyControler implements Initializable {
                                         vertex.getArcs().add(arc);
 
 
-                                        graph.addArc(arc);
+
 
 
                                         Pane pane = (Pane) graph.getTab().getContent();
@@ -668,7 +668,7 @@ public class MyControler implements Initializable {
                                             arc.setUnorientedArrow(pane);
                                             arc.updateUnorientedArrow();
                                         }
-
+                                        graph.addArc(arc);
 
                                         // panes.get(0).getChildren().add(arc);
 
