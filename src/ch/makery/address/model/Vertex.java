@@ -1,9 +1,11 @@
 package ch.makery.address.model;
 
 import ch.makery.address.controller.MyApplication;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
+import java.awt.Panel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +24,9 @@ public class Vertex {
 
 
 
-    public void setTextInPane(){
+    public void setTextInPane(Pane pane){
 
-        MyApplication.pane.getChildren().add(text);
+        pane.getChildren().add(text);
 
     }
 

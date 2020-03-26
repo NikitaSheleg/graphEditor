@@ -30,6 +30,7 @@ public class MyApplication extends Application {
             pane = new Pane();
             pane.getChildren().add(root);
             scene = new Scene(pane);
+            MyControler.stage = primaryStage;
             primaryStage.setTitle("My Application");
             primaryStage.setScene(scene);
             primaryStage.show();

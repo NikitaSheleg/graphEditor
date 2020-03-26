@@ -68,11 +68,9 @@ public class MyControler implements Initializable {
 
     private Translate translate = new Translate();
 
-    public static int countCircle = 0;
+    public  int countCircle = 0;
 
-    public Graph graph = new Graph();
-
-
+    private Graph graph;
     private Pane pane;
 
 
@@ -128,14 +126,11 @@ public class MyControler implements Initializable {
 
     private Tab tab = new Tab();
 
+    private List<Graph> graphs = new ArrayList<>();
 
     private List<Pane> panes = new ArrayList<>();
 
     private ArrayList<Circle> circleArray = new ArrayList<>();
-
-    private ArrayList<Arc> arcArray = new ArrayList<>();
-
-    List<Vertex> vertices = new ArrayList<>();
 
 
     @Override
@@ -153,10 +148,9 @@ public class MyControler implements Initializable {
 
 
         pane = new Pane();
-
         tabPane.getTabs().get(0).setContent(pane);
-
-
+        graph = new Graph(tabPane.getTabs().get(0));
+        graphs.add(graph);
         panes.add(pane);
 
 
@@ -181,7 +175,12 @@ public class MyControler implements Initializable {
 
     public void showMultipleArc(ActionEvent event) {
 
-        graph.showMultipleArc(arcArray);
+        for (Graph graph : graphs) {
+            if (graph.getTab().isSelected()) {
+                //   graph.showMultipleArc();
+
+            }
+        }
 
 
     }
@@ -199,10 +198,10 @@ public class MyControler implements Initializable {
 
         Pane pane = new Pane();
 
+        graphs.add(new Graph(tab1));
         panes.add(pane);
-
+        circleArray = new ArrayList<>();
         tabPane.getTabs().get(tabPane.getTabs().size() - 1).setContent(pane);
-
 
     }
 
@@ -260,7 +259,12 @@ public class MyControler implements Initializable {
 
         }
 
-        graph.showMatrix();
+        for (Graph graph : graphs) {
+            if (graph.getTab().isSelected()) {
+                graph.showMatrix();
+
+            }
+        }
 
         for (Circle circle : circleArray) {
 
@@ -277,23 +281,17 @@ public class MyControler implements Initializable {
 
         public void run() {
 
-            for (Circle circle : circleArray) {
+            for (Graph graph : graphs) {
+                if (graph.getTab().isSelected()) {
+                    for (Vertex vertex : graph.getVertices()) {
+                        vertex.getCircle().setOnMousePressed(circleOnMousePressedEventHandler);
+                        vertex.getCircle().setOnMouseDragged(circleOnMouseDraggedEventHandler);
 
-                circle.setOnMousePressed(circleOnMousePressedEventHandler);
-
-                circle.setOnMouseDragged(circleOnMouseDraggedEventHandler);
-
-
-            }
-
-            System.out.println(arcArray.size());
-
-            for (Arc arc : arcArray) {
-
-                //arc.setOnMousePressed(weightArc); //Метод с кнопкой
-
-
-                arc.setOnMouseDragged(transLine);
+                        for (Arc arc : vertex.getArcs()) {
+                            arc.setOnMouseDragged(transLine);
+                        }
+                    }
+                }
 
             }
 
@@ -341,7 +339,6 @@ public class MyControler implements Initializable {
 
         }
 
-        graph.showMatrix();
 
         for (Circle circle : circleArray) {
 
@@ -373,58 +370,56 @@ public class MyControler implements Initializable {
 
         public void handle(MouseEvent e) {
 
+
             if (penCircle.isDisable() && e.getX() < 550 && e.getY() < 400) {
+                for (Graph graph : graphs) {
+                    if (graph.getTab().isSelected()) {
+                        Circle circle = new Circle();
 
-                Circle circle = new Circle();
+                        circleArray.add(circle);
 
-                circleArray.add(circle);
+                        circle.setCenterX(e.getX());
 
-                circle.setCenterX(e.getX());
+                        circle.setCenterY(e.getY());
 
-                circle.setCenterY(e.getY());
+                        circle.setRadius(CIRCLE_RADIUS);
 
-                circle.setRadius(CIRCLE_RADIUS);
+                        circle.setStroke(Color.GREEN);
 
-                circle.setStroke(Color.GREEN);
+                        circle.setPickOnBounds(true);
 
-                circle.setPickOnBounds(true);
-
-                circle.setFill(Color.WHITE);
-
-
-                Vertex vertex = new Vertex();
-
-                vertex.setCircle(circle);
-
-                vertices.add(vertex);
-
-                vertex.setTextInPane();
-
-                circle.setAccessibleText("str");
+                        circle.setFill(Color.WHITE);
 
 
-                vertex.setId(countCircle);
+                        Vertex vertex = new Vertex();
 
-                vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
+                        vertex.setCircle(circle);
 
-                vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
+                        graph.getVertices().add(vertex);
 
-                graph.addVertex(circleArray);
+                        vertex.setTextInPane((Pane) graph.getTab().getContent());
 
-                for (Pane pane1 : panes) {
 
-                    pane1.getChildren().add(circle);
+                        vertex.setId(graph.getVertices().size()-1);
 
+                        vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
+
+                        vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
+                        graph.addVertex();
+
+
+                        Pane pane = (Pane) graph.getTab().getContent();
+                        pane.getChildren().add(circle);
+
+
+                        // panes.get(1).getChildren().add(circle);
+
+
+                    }
                 }
-
-                // panes.get(1).getChildren().add(circle);
-
-                countCircle++;
 
 
             }
-
-
         }
 
     };
@@ -440,91 +435,94 @@ public class MyControler implements Initializable {
                 public void handle(MouseEvent t) {
 
                     if (transform.isDisable()) {
+                        for (Graph graph : graphs) {
+                            if (graph.getTab().isSelected()) {
 
-                        Circle circle = (Circle) t.getSource();
-
-
-                        for (Vertex vertex : vertices) {
-
-                            vertex.getCircle().setFill(Color.WHITE);
-
-                            if (vertex.getCircle() == circle) {
-
-                                vertex.getCircle().setFill(Color.GREEN);
-
-                                vertex.getCircle().getScene().setOnKeyPressed(e -> {
-
-                                    if (e.getCode() == KeyCode.I) {
-
-                                        Label secondLabel = new Label("Enter name vertex");
-
-                                        TextField textField = new TextField("Enter name");
-
-                                        textField.setMinWidth(120);
-
-                                        Button button1 = new Button("Button with Text");
+                                Circle circle = (Circle) t.getSource();
 
 
-                                        VBox secondaryLayout = new VBox();
+                                for (Vertex vertex : graph.getVertices()) {
 
-                                        secondaryLayout.getChildren().addAll(secondLabel, textField, button1);
+                                    vertex.getCircle().setFill(Color.WHITE);
 
+                                    if (vertex.getCircle() == circle) {
 
-                                        Scene secondScene = new Scene(secondaryLayout, 230, 100);
+                                        vertex.getCircle().setFill(Color.GREEN);
 
+                                        vertex.getCircle().getScene().setOnKeyPressed(e -> {
 
-                                        // New window (Stage)
+                                            if (e.getCode() == KeyCode.I) {
 
-                                        Stage newWindow = new Stage();
+                                                Label secondLabel = new Label("Enter name vertex");
 
-                                        newWindow.setTitle("Enter name");
+                                                TextField textField = new TextField("Enter name");
 
-                                        newWindow.setScene(secondScene);
+                                                textField.setMinWidth(120);
 
-
-                                        // Specifies the modality for new window.
-
-                                        newWindow.initModality(Modality.WINDOW_MODAL);
-
-
-                                        // Specifies the owner Window (parent) for new window
-
-                                        newWindow.initOwner(stage);
+                                                Button button1 = new Button("Button with Text");
 
 
-                                        // Set position of second window, related to primary window.
+                                                VBox secondaryLayout = new VBox();
 
-                                        newWindow.setX(stage.getX() + 100);
-
-                                        newWindow.setY(stage.getY() + 100);
+                                                secondaryLayout.getChildren().addAll(secondLabel, textField, button1);
 
 
-                                        button1.setOnAction(new EventHandler<ActionEvent>() {
+                                                Scene secondScene = new Scene(secondaryLayout, 230, 100);
 
-                                            @Override
 
-                                            public void handle(ActionEvent actionEvent) {
+                                                // New window (Stage)
 
-                                                vertex.getText().setText(textField.getText());
+                                                Stage newWindow = new Stage();
 
-                                                newWindow.close();
+                                                newWindow.setTitle("Enter name");
+
+                                                newWindow.setScene(secondScene);
+
+
+                                                // Specifies the modality for new window.
+
+                                                newWindow.initModality(Modality.WINDOW_MODAL);
+
+
+                                                // Specifies the owner Window (parent) for new window
+
+                                                newWindow.initOwner(stage);
+
+
+                                                // Set position of second window, related to primary window.
+
+                                                newWindow.setX(stage.getX() + 100);
+
+                                                newWindow.setY(stage.getY() + 100);
+
+
+                                                button1.setOnAction(new EventHandler<ActionEvent>() {
+
+                                                    @Override
+
+                                                    public void handle(ActionEvent actionEvent) {
+
+                                                        vertex.getText().setText(textField.getText());
+
+                                                        newWindow.close();
+
+                                                    }
+
+                                                });
+
+
+                                                newWindow.show();
 
                                             }
 
                                         });
 
-
-                                        newWindow.show();
-
                                     }
 
-                                });
+                                }
 
                             }
-
                         }
-
-
                     }
 
                 }
@@ -541,46 +539,52 @@ public class MyControler implements Initializable {
 
                 public void handle(MouseEvent t) {
 
-                    Circle circle = (Circle) t.getSource();
+                    for (Graph graph : graphs) {
 
-                    circle.setCenterX(t.getX());
-
-                    circle.setCenterY(t.getY());
+                        if (graph.getTab().isSelected()) {
 
 
-                    for (Vertex vertex : vertices) {
+                            Circle circle = (Circle) t.getSource();
 
-                        vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
+                            circle.setCenterX(t.getX());
 
-                        vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
+                            circle.setCenterY(t.getY());
 
-                        if (vertex.getCircle() == circle && vertex.getArcs() != null) {
 
-                            for (Arc arc : vertex.getArcs()) {
+                            for (Vertex vertex : graph.getVertices()) {
 
-                                if (arc.getBegin().getCircle() == vertex.getCircle()) {
+                                vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
 
-                                    arc.setStartX(circle.getCenterX());
+                                vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
 
-                                    arc.setStartY(circle.getCenterY());
+                                if (vertex.getCircle() == circle && vertex.getArcs() != null) {
 
-                                } else if (arc.getEnd().getCircle() == vertex.getCircle()) {
+                                    for (Arc arc : vertex.getArcs()) {
 
-                                    arc.setEndX(circle.getCenterX());
+                                        if (arc.getBegin().getCircle() == vertex.getCircle()) {
 
-                                    arc.setEndY(circle.getCenterY());
+                                            arc.setStartX(circle.getCenterX());
+
+                                            arc.setStartY(circle.getCenterY());
+
+                                        } else if (arc.getEnd().getCircle() == vertex.getCircle()) {
+
+                                            arc.setEndX(circle.getCenterX());
+
+                                            arc.setEndY(circle.getCenterY());
+
+                                        }
+
+                                        arc.updateArrow();
+
+                                    }
 
                                 }
 
-                                arc.updateArrow();
 
                             }
-
                         }
-
-
                     }
-
                 }
 
             };
@@ -597,130 +601,101 @@ public class MyControler implements Initializable {
 
             if (penLine.isDisable() || unorientedArc.isDisable()) {
 
-                if (x1 == 0 && y1 == 0) {
+                for (Graph graph : graphs) {
 
-                    Circle circle = (Circle) t.getSource();
-
-                    for (Vertex vertex : vertices) {
-
-                        if (vertex.getCircle() == circle) {
-
-                            x1 = t.getX();
-
-                            y1 = t.getY();
-
-                            arc.setBegin(vertex);
-
-                            arc.setStartX(vertex.getCircle().getCenterX());
-
-                            arc.setStartY(vertex.getCircle().getCenterY());
-
-                            vertex.addArc(arc);
-
-                        }
-
-                    }
-
-                } else {
-
-                    if (x2 == 0 && y2 == 0) {
-
-                        x2 = t.getX();
-
-                        y2 = t.getY();
-
-                        Circle circle = (Circle) (t.getSource());
-
-                        for (Vertex vertex : vertices) {
-
-                            if (vertex.getCircle() == circle) {
-
-                                vertex.addArc(arc);
-
-                                arc.setEnd(vertex);
-
-                                arc.setEndX(vertex.getCircle().getCenterX());
-
-                                arc.setEndY(vertex.getCircle().getCenterY());
+                    if (graph.getTab().isSelected()) {
 
 
-                                arcArray.add(arc);
+                        if (x1 == 0 && y1 == 0) {
 
+                            Circle circle = (Circle) t.getSource();
 
-                                //dобавил немножко от себя
+                            for (Vertex vertex : graph.getVertices()) {
 
-                                //Изменение цвета
+                                if (vertex.getCircle() == circle) {
 
-/*
+                                    x1 = t.getX();
 
+                                    y1 = t.getY();
 
+                                    arc.setBegin(vertex);
 
-                                if (arc.getBegin().getCircle().getFill() == Color.WHITE) {
+                                    arc.setStartX(vertex.getCircle().getCenterX());
 
-                                    arc.getBegin().getCircle().setFill(Color.GREEN);
+                                    arc.setStartY(vertex.getCircle().getCenterY());
+
+                                    vertex.addArc(arc);
 
                                 }
 
-                                if (arc.getEnd().getCircle().getFill() == Color.WHITE && arc.getBegin().getCircle().getFill() == Color.GREEN) {
+                            }
 
-                                    arc.getEnd().getCircle().setFill(Color.BROWN);
+                        } else {
 
-                                } else if (arc.getBegin().getCircle().getFill() == arc.getEnd().getCircle().getFill()) {
+                            if (x2 == 0 && y2 == 0) {
 
-                                    arc.getBegin().getCircle().setFill(Color.STEELBLUE);
+                                x2 = t.getX();
 
-                                } else if (arc.getBegin().getCircle().getFill() == Color.BROWN) {
+                                y2 = t.getY();
 
-                                    arc.getEnd().getCircle().setFill(Color.GREEN);
+                                Circle circle = (Circle) (t.getSource());
 
-                                } else if (arc.getEnd().getCircle().getFill() == Color.GREEN) {
+                                for (Vertex vertex : graph.getVertices()) {
 
-                                    arc.getBegin().getCircle().setFill(Color.BROWN);
+                                    if (vertex.getCircle() == circle) {
 
-                                }
+                                        vertex.addArc(arc);
 
-*/
+                                        arc.setEnd(vertex);
+
+                                        arc.setEndX(vertex.getCircle().getCenterX());
+
+                                        arc.setEndY(vertex.getCircle().getCenterY());
 
 
-                                arc.setStrokeWidth(2);
+                                        vertex.getArcs().add(arc);
 
-                                graph.addArc(arc);
 
-                                for (Pane pane1 : panes) {
 
-                                    pane1.getChildren().add(arc);
-                                    if (penLine.isDisable()) {
-                                        arc.setArrow(pane1);
-                                    } else if (unorientedArc.isDisable()) {
-                                        arc.setUnorientedArrow(pane1);
-                                        arc.updateUnorientedArrow();
+
+                                        graph.addArc(arc);
+
+
+                                        Pane pane = (Pane) graph.getTab().getContent();
+                                        pane.getChildren().add(arc);
+                                        if (penLine.isDisable()) {
+                                            arc.setArrow(pane);
+                                        } else if (unorientedArc.isDisable()) {
+                                            arc.setUnorientedArrow(pane);
+                                            arc.updateUnorientedArrow();
+                                        }
+
+
+                                        // panes.get(0).getChildren().add(arc);
+
+                                        x1 = 0;
+
+                                        x2 = 0;
+
+                                        y1 = 0;
+
+                                        y2 = 0;
+                                        arc.updateArrow();
+                                        //  arc.updateUnorientedArrow();
+
+
+                                        this.arc = new Arc(x1, y1, x2, y2);
+
                                     }
 
                                 }
-
-                                // panes.get(0).getChildren().add(arc);
-
-                                x1 = 0;
-
-                                x2 = 0;
-
-                                y1 = 0;
-
-                                y2 = 0;
-                                arc.updateArrow();
-                                //  arc.updateUnorientedArrow();
-
-
-                                this.arc = new Arc(x1, y1, x2, y2);
 
                             }
 
                         }
 
                     }
-
                 }
-
             }
 
         }
@@ -771,66 +746,68 @@ public class MyControler implements Initializable {
 
                 public void handle(MouseEvent t) {
 
-                    for (Vertex vertex : vertices) {
+                    for (Graph graph : graphs) {
 
-                        vertex.getCircle().setFill(Color.WHITE);
+                        for (Vertex vertex : graph.getVertices()) {
 
-                    }
+                            vertex.getCircle().setFill(Color.WHITE);
 
-                    Arc arc = (Arc) t.getSource();
+                        }
 
-                    if (Math.abs(t.getX() - arc.getStartX()) < 25 && Math.abs(t.getY() - arc.getStartY()) < 25) {
+                        Arc arc = (Arc) t.getSource();
 
-                        arc.setStartX(t.getX());
+                        if (Math.abs(t.getX() - arc.getStartX()) < 25 && Math.abs(t.getY() - arc.getStartY()) < 25) {
 
-                        arc.setStartY(t.getY());
+                            arc.setStartX(t.getX());
 
-                        for (Vertex vertex : vertices) {
+                            arc.setStartY(t.getY());
 
-                            if (Math.abs(arc.getStartX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getStartY() - vertex.getCircle().getCenterY()) < 15) {
+                            for (Vertex vertex : graph.getVertices()) {
 
-                                arc.setStartX(vertex.getCircle().getCenterX());
+                                if (Math.abs(arc.getStartX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getStartY() - vertex.getCircle().getCenterY()) < 15) {
 
-                                arc.setStartY(vertex.getCircle().getCenterY());
+                                    arc.setStartX(vertex.getCircle().getCenterX());
 
-                                arc.setBegin(vertex);
+                                    arc.setStartY(vertex.getCircle().getCenterY());
 
-                                vertex.addArc(arc);
+                                    arc.setBegin(vertex);
+
+                                    vertex.addArc(arc);
+
+                                }
+
+                            }
+
+                        } else if (Math.abs(t.getX() - arc.getEndX()) < 25 && Math.abs(t.getY() - arc.getEndY()) < 25) {
+
+                            arc.setEndX(t.getX());
+
+                            arc.setEndY(t.getY());
+
+                            for (Vertex vertex : graph.getVertices()) {
+
+                                if (Math.abs(arc.getEndX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getEndY() - vertex.getCircle().getCenterY()) < 15) {
+
+                                    arc.setEndX(vertex.getCircle().getCenterX());
+
+                                    arc.setEndY(vertex.getCircle().getCenterY());
+
+                                    arc.setEnd(vertex);
+
+                                    vertex.addArc(arc);
+
+
+                                }
 
                             }
 
                         }
 
-                    } else if (Math.abs(t.getX() - arc.getEndX()) < 25 && Math.abs(t.getY() - arc.getEndY()) < 25) {
 
-                        arc.setEndX(t.getX());
-
-                        arc.setEndY(t.getY());
-
-                        for (Vertex vertex : vertices) {
-
-                            if (Math.abs(arc.getEndX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getEndY() - vertex.getCircle().getCenterY()) < 15) {
-
-                                arc.setEndX(vertex.getCircle().getCenterX());
-
-                                arc.setEndY(vertex.getCircle().getCenterY());
-
-                                arc.setEnd(vertex);
-
-                                vertex.addArc(arc);
-
-
-                            }
-
-                        }
+                        arc.updateArrow();
 
                     }
-
-
-                    arc.updateArrow();
-
                 }
-
             };
 
 
