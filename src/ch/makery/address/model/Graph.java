@@ -1,25 +1,46 @@
 package ch.makery.address.model;
 
 
+import javafx.scene.Group;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
 
-
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class Graph {
+public class Graph extends Group implements Serializable {
 
     private ArrayList<ArrayList<Integer>> matrixAdjancy;
     private List<Vertex> vertices = new ArrayList<>();
-    private Tab tab;
+    private transient Tab tab;
+
+
+    public ArrayList<ArrayList<Integer>> getMatrixAdjancy() {
+        return matrixAdjancy;
+    }
 
     public void removeVertex(Vertex vertex) {
         vertices.remove(vertex);
-        matrixAdjancy.get(vertex.getId()).remove(vertex.getId());
-        matrixAdjancy.remove(vertex.getId());
+
+        for (ArrayList<Integer> integers : matrixAdjancy) {
+            integers.remove(vertex.getVertexId());
+        }
+
+        for (int i = vertex.getVertexId() + 1; i < vertices.size(); i++) {
+            vertices.get(i).setVertexId(vertices.get(i).getVertexId() - 1);
+        }
+        matrixAdjancy.remove(vertex.getVertexId());
+    }
+
+    public void removeArcFromMatrix(Arc arc) {
+        matrixAdjancy.get(arc.getBegin().getVertexId()).set(arc.getEnd().getVertexId(), 0);
+
+        matrixAdjancy.get(arc.getEnd().getVertexId()).set(arc.getBegin().getVertexId(), 0);
+
     }
 
     public Tab getTab() {
@@ -59,19 +80,15 @@ public class Graph {
     }
 
 
-    public void removeArcFromMatrix(Arc arc) {
-        matrixAdjancy.get(arc.getBegin().getId()).set(arc.getEnd().getId(), 0);
-
-        matrixAdjancy.get(arc.getEnd().getId()).set(arc.getBegin().getId(), 0);
-
-    }
-
     public void addArc(Arc arc) {
-        System.out.println(arc.isUnoriented());
-        matrixAdjancy.get(arc.getBegin().getId()).set(arc.getEnd().getId(), 1);
 
-        matrixAdjancy.get(arc.getEnd().getId()).set(arc.getBegin().getId(), 1);
+        if (arc.isUnoriented()) {
+            matrixAdjancy.get(arc.getBegin().getVertexId()).set(arc.getEnd().getVertexId(), 1);
 
+            matrixAdjancy.get(arc.getEnd().getVertexId()).set(arc.getBegin().getVertexId(), 1);
+        } else {
+            matrixAdjancy.get(arc.getBegin().getVertexId()).set(arc.getEnd().getVertexId(), 1);
+        }
     }
 
 
@@ -105,5 +122,43 @@ public class Graph {
 
     }
 
+    public void fileCreateAndAdd(String name) {
+        try {
+            FileWriter writer = new FileWriter(name + ".txt");
 
+            writer.write(String.valueOf(matrixAdjancy));
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void readFromFile() {
+        try (FileReader reader = new FileReader("input.txt")) {
+            // читаем посимвольно
+            int c;
+            while ((c = reader.read()) != -1) {
+                if (Character.getNumericValue((char) c) != -1)
+                    System.out.print(Character.getNumericValue((char) c));
+
+
+            }
+        } catch (IOException ex) {
+
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    public void setMatrixAdjancy(ArrayList<ArrayList<Integer>> matrixAdjancy) {
+        this.matrixAdjancy = matrixAdjancy;
+    }
+
+    public void setVertices(List<Vertex> vertices) {
+        this.vertices = vertices;
+    }
+
+    public void setTab(Tab tab) {
+        this.tab = tab;
+    }
 }

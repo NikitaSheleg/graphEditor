@@ -1,32 +1,23 @@
 package ch.makery.address.model;
 
 
-import ch.makery.address.controller.MyApplication;
 import javafx.beans.InvalidationListener;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
-
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeLineJoin;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EventListener;
 import java.util.List;
 
 
-public class Arc extends Line {
+public class Arc extends Line implements Serializable {
 
 
     private Vertex begin;
-
     private Vertex end;
+
+
 
     int weight;
     private Line line1 = new Line();
@@ -36,53 +27,104 @@ public class Arc extends Line {
 
     private List<Line> lineList = new ArrayList<>();
 
-    Runnable binaryRunnable = () -> {
-        InvalidationListener updater = o -> {
-            double ex = getStartX();
-            double ey = getStartY();
-            double sx = getEndX();
-            double sy = getEndY();
+    private Runnable binaryRunnable = new Runnable() {
+        @Override
+        public void run() {
+            InvalidationListener updater = o -> {
+                double ex = getStartX();
+                double ey = getStartY();
+                double sx = getEndX();
+                double sy = getEndY();
 
 
-            line3.setEndX(ex);
-            line3.setEndY(ey);
-            line4.setEndX(ex);
-            line4.setEndY(ey);
+                line3.setEndX(ex);
+                line3.setEndY(ey);
+                line4.setEndX(ex);
+                line4.setEndY(ey);
 
 
-            if (ex == sx && ey == sy) {
-                // arrow parts of length 0
-                line3.setStartX(ex);
-                line3.setStartY(ey);
-                line4.setStartX(ex);
-                line4.setStartY(ey);
+                if (ex == sx && ey == sy) {
+                    // arrow parts of length 0
+                    line3.setStartX(ex);
+                    line3.setStartY(ey);
+                    line4.setStartX(ex);
+                    line4.setStartY(ey);
 
-            } else {
-                double factor = 10 / Math.hypot(sx - ex, sy - ey);
-                double factorO = 10 / Math.hypot(sx - ex, sy - ey);
+                } else {
+                    double factor = 10 / Math.hypot(sx - ex, sy - ey);
+                    double factorO = 10 / Math.hypot(sx - ex, sy - ey);
 
-                // part in direction of main line
-                double dx = (sx - ex) * factor;
-                double dy = (sy - ey) * factor;
+                    // part in direction of main line
+                    double dx = (sx - ex) * factor;
+                    double dy = (sy - ey) * factor;
 
-                // part ortogonal to main line
-                double ox = (sx - ex) * factorO;
-                double oy = (sy - ey) * factorO;
+                    // part ortogonal to main line
+                    double ox = (sx - ex) * factorO;
+                    double oy = (sy - ey) * factorO;
 
-                line3.setStartX(ex + dx - oy);
-                line3.setStartY(ey + dy + ox);
-                line4.setStartX(ex + dx + oy);
-                line4.setStartY(ey + dy - ox);
-            }
-        };
+                    line3.setStartX(ex + dx - oy);
+                    line3.setStartY(ey + dy + ox);
+                    line4.setStartX(ex + dx + oy);
+                    line4.setStartY(ey + dy - ox);
+                }
+            };
 
-        // add updater to properties
-        startXProperty().addListener(updater);
-        startYProperty().addListener(updater);
-        endXProperty().addListener(updater);
-        endYProperty().addListener(updater);
-        updater.invalidated(null);
+            // add updater to properties
+            startXProperty().addListener(updater);
+            startYProperty().addListener(updater);
+            endXProperty().addListener(updater);
+            endYProperty().addListener(updater);
+            updater.invalidated(null);
+        }
     };
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public Line getLine1() {
+        return line1;
+    }
+
+    public void setLine1(Line line1) {
+        this.line1 = line1;
+    }
+
+    public Line getLine2() {
+        return line2;
+    }
+
+    public void setLine2(Line line2) {
+        this.line2 = line2;
+    }
+
+    public Line getLine3() {
+        return line3;
+    }
+
+    public void setLine3(Line line3) {
+        this.line3 = line3;
+    }
+
+    public Line getLine4() {
+        return line4;
+    }
+
+    public void setLine4(Line line4) {
+        this.line4 = line4;
+    }
+
+    public List<Line> getLineList() {
+        return lineList;
+    }
+
+    public void setLineList(List<Line> lineList) {
+        this.lineList = lineList;
+    }
 
     public List<Line> getArrow() {
         return lineList;
@@ -120,49 +162,52 @@ public class Arc extends Line {
     }
 
 
-    Runnable runnable = () -> {
-        InvalidationListener updater = o -> {
-            double ex = getEndX();
-            double ey = getEndY();
-            double sx = getStartX();
-            double sy = getStartY();
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            InvalidationListener updater = o -> {
+                double ex = getEndX();
+                double ey = getEndY();
+                double sx = getStartX();
+                double sy = getStartY();
 
-            line1.setEndX(ex);
-            line1.setEndY(ey);
-            line2.setEndX(ex);
-            line2.setEndY(ey);
+                line1.setEndX(ex);
+                line1.setEndY(ey);
+                line2.setEndX(ex);
+                line2.setEndY(ey);
 
-            if (ex == sx && ey == sy) {
-                // arrow parts of length 0
-                line1.setStartX(ex);
-                line1.setStartY(ey);
-                line2.setStartX(ex);
-                line2.setStartY(ey);
-            } else {
-                double factor = 5 / Math.hypot(sx - ex, sy - ey);
-                double factorO = 5 / Math.hypot(sx - ex, sy - ey);
+                if (ex == sx && ey == sy) {
+                    // arrow parts of length 0
+                    line1.setStartX(ex);
+                    line1.setStartY(ey);
+                    line2.setStartX(ex);
+                    line2.setStartY(ey);
+                } else {
+                    double factor = 5 / Math.hypot(sx - ex, sy - ey);
+                    double factorO = 5 / Math.hypot(sx - ex, sy - ey);
 
-                // part in direction of main line
-                double dx = (sx - ex) * factor;
-                double dy = (sy - ey) * factor;
+                    // part in direction of main line
+                    double dx = (sx - ex) * factor;
+                    double dy = (sy - ey) * factor;
 
-                // part ortogonal to main line
-                double ox = (sx - ex) * factorO;
-                double oy = (sy - ey) * factorO;
+                    // part ortogonal to main line
+                    double ox = (sx - ex) * factorO;
+                    double oy = (sy - ey) * factorO;
 
-                line1.setStartX(ex + dx - oy);
-                line1.setStartY(ey + dy + ox);
-                line2.setStartX(ex + dx + oy);
-                line2.setStartY(ey + dy - ox);
-            }
-        };
+                    line1.setStartX(ex + dx - oy);
+                    line1.setStartY(ey + dy + ox);
+                    line2.setStartX(ex + dx + oy);
+                    line2.setStartY(ey + dy - ox);
+                }
+            };
 
-        // add updater to properties
-        startXProperty().addListener(updater);
-        startYProperty().addListener(updater);
-        endXProperty().addListener(updater);
-        endYProperty().addListener(updater);
-        updater.invalidated(null);
+            // add updater to properties
+            startXProperty().addListener(updater);
+            startYProperty().addListener(updater);
+            endXProperty().addListener(updater);
+            endYProperty().addListener(updater);
+            updater.invalidated(null);
+        }
     };
 
     public void updateArrow() {
@@ -188,6 +233,21 @@ public class Arc extends Line {
 
     }
 
+    @Override
+    public String toString() {
+        return "Arc{" +
+                "begin=" + begin +
+                ", end=" + end +
+                ", weight=" + weight +
+                ", line1=" + line1 +
+                ", line2=" + line2 +
+                ", line3=" + line3 +
+                ", line4=" + line4 +
+                ", lineList=" + lineList +
+                ", binaryRunnable=" + binaryRunnable +
+                ", runnable=" + runnable +
+                '}';
+    }
 
     public void setBegin(Vertex begin) {
 

@@ -1,6 +1,7 @@
 package ch.makery.address.controller;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
@@ -55,7 +56,6 @@ import javafx.stage.Stage;
 
 public class MyControler implements Initializable {
 
-    private final float CIRCLE_RADIUS = 10.0f;
 
     private Translate translate = new Translate();
 
@@ -81,6 +81,13 @@ public class MyControler implements Initializable {
     @FXML
 
     private Button penCircle = new Button();
+
+    @FXML
+    private MenuItem save;
+    @FXML
+    private MenuItem saveAs;
+    @FXML
+    private MenuItem open;
 
 
     @FXML
@@ -164,19 +171,6 @@ public class MyControler implements Initializable {
     }
 
 
-    public void showMultipleArc(ActionEvent event) {
-
-        for (Graph graph : graphs) {
-            if (graph.getTab().isSelected()) {
-                //   graph.showMultipleArc();
-
-            }
-        }
-
-
-    }
-
-
     public void newPaneAction(ActionEvent event) {
 
         Tab tab1 = new Tab("New File");
@@ -193,6 +187,55 @@ public class MyControler implements Initializable {
         panes.add(pane);
         circleArray = new ArrayList<>();
         tabPane.getTabs().get(tabPane.getTabs().size() - 1).setContent(pane);
+
+    }
+
+    private FileWorkController fileWorkController = new FileWorkController();
+
+    public void saveAction(ActionEvent actionEvent) {
+        for (Graph graph : graphs) {
+            if (graph.getTab().isSelected()) {
+                try {
+                    List<Arc> arcs = new ArrayList<>();
+                    for (Vertex vertex : graph.getVertices()) {
+                        arcs.addAll(vertex.getArcs());
+                    }
+
+                    fileWorkController.saveNode(graph.getVertices(), arcs);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    public void saveAsAction(ActionEvent actionEvent) {
+    }
+
+    public void openAction(ActionEvent actionEvent) {
+        for (Graph graph : graphs) {
+            if (graph.getTab().isSelected()) {
+                try {
+                    fileWorkController.openNode(graph.getTab());
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+
+    public void showMultipleArc(ActionEvent event) {
+
+        for (Graph graph : graphs) {
+            if (graph.getTab().isSelected()) {
+                //   graph.showMultipleArc();
+
+            }
+        }
+
 
     }
 
@@ -365,43 +408,17 @@ public class MyControler implements Initializable {
             if (penCircle.isDisable() && e.getX() < 550 && e.getY() < 400) {
                 for (Graph graph : graphs) {
                     if (graph.getTab().isSelected()) {
-                        Circle circle = new Circle();
-
-                        circleArray.add(circle);
-
-                        circle.setCenterX(e.getX());
-
-                        circle.setCenterY(e.getY());
-
-                        circle.setRadius(CIRCLE_RADIUS);
-
-                        circle.setStroke(Color.GREEN);
-
-                        circle.setPickOnBounds(true);
-
-                        circle.setFill(Color.WHITE);
-
-
-                        Vertex vertex = new Vertex();
-
-                        vertex.setCircle(circle);
-
-                        graph.getVertices().add(vertex);
-
-                        vertex.setTextInPane((Pane) graph.getTab().getContent());
-
-
-                        vertex.setId(graph.getVertices().size() - 1);
-
-                        vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
-
-                        vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
-                        graph.addVertex();
 
 
                         Pane pane = (Pane) graph.getTab().getContent();
-                        pane.getChildren().add(circle);
-
+                        Vertex vertex = new Vertex(e.getX(), e.getY(), pane);
+                        graph.getVertices().add(vertex);
+                        circleArray.add(vertex.getCircle());
+                        vertex.setTextInPane((Pane) graph.getTab().getContent());
+                        vertex.setVertexId(graph.getVertices().size() - 1);
+                        vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
+                        vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
+                        graph.addVertex();
 
                         // panes.get(1).getChildren().add(circle);
 
@@ -591,7 +608,7 @@ public class MyControler implements Initializable {
             };
 
 
-    EventHandler<MouseEvent> lineDrawEvent = new EventHandler<MouseEvent>() {
+    EventHandler<MouseEvent> lineDrawEvent = new EventHandler<>() {
 
         Arc arc = new Arc(0, 0, 0, 0);
 
@@ -657,9 +674,6 @@ public class MyControler implements Initializable {
                                         vertex.getArcs().add(arc);
 
 
-
-
-
                                         Pane pane = (Pane) graph.getTab().getContent();
                                         pane.getChildren().add(arc);
                                         if (penLine.isDisable()) {
@@ -668,7 +682,7 @@ public class MyControler implements Initializable {
                                             arc.setUnorientedArrow(pane);
                                             arc.updateUnorientedArrow();
                                         }
-                                        graph.addArc(arc);
+
 
                                         // panes.get(0).getChildren().add(arc);
 
@@ -680,6 +694,7 @@ public class MyControler implements Initializable {
 
                                         y2 = 0;
                                         arc.updateArrow();
+                                        graph.addArc(arc);
                                         //  arc.updateUnorientedArrow();
 
 
@@ -754,7 +769,6 @@ public class MyControler implements Initializable {
                         }
 
                         Arc arc = (Arc) t.getSource();
-
                         if (Math.abs(t.getX() - arc.getStartX()) < 25 && Math.abs(t.getY() - arc.getStartY()) < 25) {
 
                             arc.setStartX(t.getX());
@@ -804,9 +818,9 @@ public class MyControler implements Initializable {
 
                         }
 
-                        graph.addArc(arc);
-                        arc.updateArrow();
 
+                        arc.updateArrow();
+                        graph.addArc(arc);
                     }
                 }
             };
