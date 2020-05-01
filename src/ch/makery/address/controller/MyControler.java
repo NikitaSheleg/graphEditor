@@ -199,6 +199,7 @@ public class MyControler implements Initializable {
                     List<Arc> arcs = new ArrayList<>();
                     for (Vertex vertex : graph.getVertices()) {
                         arcs.addAll(vertex.getArcs());
+
                     }
 
                     fileWorkController.saveNode(graph.getVertices(), arcs);
@@ -217,7 +218,8 @@ public class MyControler implements Initializable {
         for (Graph graph : graphs) {
             if (graph.getTab().isSelected()) {
                 try {
-                    fileWorkController.openNode(graph.getTab());
+                    fileWorkController.openNode(graph.getTab(), graph);
+
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }

@@ -18,7 +18,6 @@ public class Arc extends Line implements Serializable {
     private Vertex end;
 
 
-
     int weight;
     private Line line1 = new Line();
     private Line line2 = new Line();
@@ -222,7 +221,6 @@ public class Arc extends Line implements Serializable {
 
         super(x1, y1, x2, y2);
         this.setStrokeLineCap(StrokeLineCap.ROUND);
-
 
     }
 
