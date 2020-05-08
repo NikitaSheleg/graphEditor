@@ -9,6 +9,7 @@ import javafx.scene.shape.StrokeLineCap;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Arc extends Line implements Serializable {
@@ -267,4 +268,25 @@ public class Arc extends Line implements Serializable {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Arc arc = (Arc) o;
+        return weight == arc.weight &&
+                begin.equals(arc.begin) &&
+                end.equals(arc.end) &&
+                line1.equals(arc.line1) &&
+                line2.equals(arc.line2) &&
+                line3.equals(arc.line3) &&
+                line4.equals(arc.line4) &&
+                lineList.equals(arc.lineList) &&
+                binaryRunnable.equals(arc.binaryRunnable) &&
+                runnable.equals(arc.runnable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(begin, end, weight, line1, line2, line3, line4, lineList, binaryRunnable, runnable);
+    }
 }

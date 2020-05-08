@@ -6,11 +6,7 @@ import java.io.InputStream;
 
 import java.net.URL;
 
-import java.util.ArrayList;
-
-import java.util.List;
-
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 import ch.makery.address.model.Arc;
@@ -198,509 +194,526 @@ public class MyControler implements Initializable {
                 try {
                     List<Arc> arcs = new ArrayList<>();
                     for (Vertex vertex : graph.getVertices()) {
+                        /*                            if (arcs.isEmpty())
+                                arcs.add(arc);
+                            else
+                                for (Arc arc1 : arcs) {
+                                    if (!arc.equals(arc1)) {
+                                        arcs.add(arc);
+
+                                    }
+                                }*/
                         arcs.addAll(vertex.getArcs());
 
                     }
 
-                    fileWorkController.saveNode(graph.getVertices(), arcs);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    arcs.removeIf(arc -> arc.getBegin() == null || arc.getEnd() == null);
+
+
+
+                        fileWorkController.saveNode(graph.getVertices(), arcs);
+                    } catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+
+        public void saveAsAction (ActionEvent actionEvent){
+        }
+
+        public void openAction (ActionEvent actionEvent){
+            for (Graph graph : graphs) {
+                if (graph.getTab().isSelected()) {
+                    try {
+                        graph = fileWorkController.openNode(graph.getTab(), graph);
+                        for (Vertex vertex : graph.getVertices()) {
+                            circleArray.add(vertex.getCircle());
+                        }
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         }
 
-    }
 
-    public void saveAsAction(ActionEvent actionEvent) {
-    }
-
-    public void openAction(ActionEvent actionEvent) {
-        for (Graph graph : graphs) {
-            if (graph.getTab().isSelected()) {
-                try {
-                    fileWorkController.openNode(graph.getTab(), graph);
-
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
-
-
-    public void showMultipleArc(ActionEvent event) {
-
-        for (Graph graph : graphs) {
-            if (graph.getTab().isSelected()) {
-                //   graph.showMultipleArc();
-
-            }
-        }
-
-
-    }
-
-
-    // Ивент нажатия кнопки
-
-    public void penCircleAction(ActionEvent event) {
-
-        MyApplication.scene.setCursor(Cursor.DEFAULT);
-
-        penCircle.setDisable(true);
-
-        penLine.setDisable(false);
-
-        transform.setDisable(false);
-        unorientedArc.setDisable(false);
-
-        for (Tab tab1 : tabPane.getTabs()) {
-
-            tab1.getContent().addEventFilter(MouseEvent.MOUSE_CLICKED, drawCircle);
-
-        }
-
-        for (Circle circle : circleArray) {
-
-            circle.setOnMousePressed(null);
-
-            circle.setOnMouseDragged(null);
-
-        }
-
-
-    }
-
-
-    //Ивент нажатия кнопки
-
-    public void penLineAction(ActionEvent event) {
-
-        MyApplication.scene.setCursor(Cursor.CROSSHAIR);
-
-        penCircle.setDisable(false);
-
-        penLine.setDisable(true);
-
-        transform.setDisable(false);
-
-        unorientedArc.setDisable(false);
-
-        for (Circle circle : circleArray) {
-
-            circle.setOnMousePressed(null);
-
-            circle.setOnMouseDragged(null);
-
-        }
-
-        for (Graph graph : graphs) {
-            if (graph.getTab().isSelected()) {
-                graph.showMatrix();
-
-            }
-        }
-
-        for (Circle circle : circleArray) {
-
-            circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
-
-        }
-
-    }
-
-
-    Runnable thread = new Runnable() {
-
-        @Override
-
-        public void run() {
+        public void showMultipleArc (ActionEvent event){
 
             for (Graph graph : graphs) {
                 if (graph.getTab().isSelected()) {
-                    for (Vertex vertex : graph.getVertices()) {
-                        vertex.getCircle().setOnMousePressed(circleOnMousePressedEventHandler);
-                        vertex.getCircle().setOnMouseDragged(circleOnMouseDraggedEventHandler);
+                    //   graph.showMultipleArc();
 
-                        for (Arc arc : vertex.getArcs()) {
-                            arc.setOnMouseDragged(transLine);
-                        }
-                    }
                 }
+            }
+
+
+        }
+
+
+        // Ивент нажатия кнопки
+
+        public void penCircleAction (ActionEvent event){
+
+            MyApplication.scene.setCursor(Cursor.DEFAULT);
+
+            penCircle.setDisable(true);
+
+            penLine.setDisable(false);
+
+            transform.setDisable(false);
+            unorientedArc.setDisable(false);
+
+            for (Tab tab1 : tabPane.getTabs()) {
+
+                tab1.getContent().addEventFilter(MouseEvent.MOUSE_CLICKED, drawCircle);
+
+            }
+
+            for (Circle circle : circleArray) {
+
+                circle.setOnMousePressed(null);
+
+                circle.setOnMouseDragged(null);
 
             }
 
 
         }
 
-    };
 
+        //Ивент нажатия кнопки
 
-    public void transformAction(ActionEvent event) {
+        public void penLineAction (ActionEvent event){
 
-        MyApplication.scene.setCursor(Cursor.DEFAULT);
+            MyApplication.scene.setCursor(Cursor.CROSSHAIR);
 
-        penCircle.setDisable(false);
+            penCircle.setDisable(false);
 
+            penLine.setDisable(true);
 
-        penLine.setDisable(false);
+            transform.setDisable(false);
 
-        transform.setDisable(true);
+            unorientedArc.setDisable(false);
 
-        unorientedArc.setDisable(false);
+            for (Circle circle : circleArray) {
 
-        thread.run();
+                circle.setOnMousePressed(null);
 
+                circle.setOnMouseDragged(null);
 
-    }
+            }
 
+            for (Graph graph : graphs) {
+                if (graph.getTab().isSelected()) {
+                    graph.showMatrix();
 
-    public void unorientedArcAction(ActionEvent actionEvent) {
-        MyApplication.scene.setCursor(Cursor.CROSSHAIR);
+                }
+            }
 
-        penCircle.setDisable(false);
+            for (Circle circle : circleArray) {
 
-        penLine.setDisable(false);
+                circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
 
-        transform.setDisable(false);
-
-        unorientedArc.setDisable(true);
-
-        for (Circle circle : circleArray) {
-
-            circle.setOnMousePressed(null);
-
-            circle.setOnMouseDragged(null);
+            }
 
         }
 
 
-        for (Circle circle : circleArray) {
+        Runnable thread = new Runnable() {
 
-            circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
+            @Override
 
-        }
+            public void run() {
 
-    }
-
-
-    EventHandler<MouseEvent> trans = new EventHandler<MouseEvent>() {
-
-        @Override
-
-        public void handle(MouseEvent mouseEvent) {
-
-            Dragboard db = circleArray.get(0).startDragAndDrop(TransferMode.ANY);
-
-        }
-
-    };
-
-
-    //Ивент рисования круга
-
-    EventHandler<MouseEvent> drawCircle = new EventHandler<MouseEvent>() {
-
-        @Override
-
-        public void handle(MouseEvent e) {
-
-
-            if (penCircle.isDisable() && e.getX() < 550 && e.getY() < 400) {
                 for (Graph graph : graphs) {
                     if (graph.getTab().isSelected()) {
+                        for (Vertex vertex : graph.getVertices()) {
+                            vertex.getCircle().setOnMousePressed(circleOnMousePressedEventHandler);
+                            vertex.getCircle().setOnMouseDragged(circleOnMouseDraggedEventHandler);
 
-
-                        Pane pane = (Pane) graph.getTab().getContent();
-                        Vertex vertex = new Vertex(e.getX(), e.getY(), pane);
-                        graph.getVertices().add(vertex);
-                        circleArray.add(vertex.getCircle());
-                        vertex.setTextInPane((Pane) graph.getTab().getContent());
-                        vertex.setVertexId(graph.getVertices().size() - 1);
-                        vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
-                        vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
-                        graph.addVertex();
-
-                        // panes.get(1).getChildren().add(circle);
-
-
-                    }
-                }
-
-
-            }
-        }
-
-    };
-
-
-    EventHandler<MouseEvent> circleOnMousePressedEventHandler =
-
-            new EventHandler<MouseEvent>() {
-
-
-                @Override
-
-                public void handle(MouseEvent t) {
-
-                    if (transform.isDisable()) {
-                        for (Graph graph : graphs) {
-                            if (graph.getTab().isSelected()) {
-
-                                Circle circle = (Circle) t.getSource();
-
-
-                                for (Vertex vertex : graph.getVertices()) {
-
-                                    vertex.getCircle().setFill(Color.WHITE);
-
-                                    if (vertex.getCircle() == circle) {
-
-                                        vertex.getCircle().setFill(Color.GREEN);
-
-                                        vertex.getCircle().getScene().setOnKeyPressed(e -> {
-
-                                            if (e.getCode() == KeyCode.I) {
-
-                                                Label secondLabel = new Label("Enter name vertex");
-
-                                                TextField textField = new TextField("Enter name");
-
-                                                textField.setMinWidth(120);
-
-                                                Button button1 = new Button("Button with Text");
-
-
-                                                VBox secondaryLayout = new VBox();
-
-                                                secondaryLayout.getChildren().addAll(secondLabel, textField, button1);
-
-
-                                                Scene secondScene = new Scene(secondaryLayout, 230, 100);
-
-
-                                                // New window (Stage)
-
-                                                Stage newWindow = new Stage();
-
-                                                newWindow.setTitle("Enter name");
-
-                                                newWindow.setScene(secondScene);
-
-
-                                                // Specifies the modality for new window.
-
-                                                newWindow.initModality(Modality.WINDOW_MODAL);
-
-
-                                                // Specifies the owner Window (parent) for new window
-
-                                                newWindow.initOwner(stage);
-
-
-                                                // Set position of second window, related to primary window.
-
-                                                newWindow.setX(stage.getX() + 100);
-
-                                                newWindow.setY(stage.getY() + 100);
-
-
-                                                button1.setOnAction(new EventHandler<ActionEvent>() {
-
-                                                    @Override
-
-                                                    public void handle(ActionEvent actionEvent) {
-
-                                                        vertex.getText().setText(textField.getText());
-
-                                                        newWindow.close();
-
-                                                    }
-
-                                                });
-
-
-                                                newWindow.show();
-
-                                            } else if (e.getCode() == KeyCode.DELETE) {
-                                                Pane pane = (Pane) graph.getTab().getContent();
-                                                pane.getChildren().remove(vertex.getCircle());
-                                                for (Arc arc : vertex.getArcs()) {
-                                                    graph.removeArcFromMatrix(arc);
-                                                    pane.getChildren().removeAll(arc.getArrow());
-                                                }
-                                                pane.getChildren().removeAll(vertex.getArcs());
-                                                graph.removeVertex(vertex);
-
-                                            }
-
-                                        });
-
-                                    }
-
-                                }
-
+                            for (Arc arc : vertex.getArcs()) {
+                                arc.setOnMouseDragged(transLine);
                             }
                         }
                     }
 
                 }
 
-            };
+
+            }
+
+        };
 
 
-    EventHandler<MouseEvent> circleOnMouseDraggedEventHandler =
+        public void transformAction (ActionEvent event){
 
-            new EventHandler<MouseEvent>() {
+            MyApplication.scene.setCursor(Cursor.DEFAULT);
+
+            penCircle.setDisable(false);
 
 
-                @Override
+            penLine.setDisable(false);
 
-                public void handle(MouseEvent t) {
+            transform.setDisable(true);
+
+            unorientedArc.setDisable(false);
+
+            thread.run();
+
+
+        }
+
+
+        public void unorientedArcAction (ActionEvent actionEvent){
+            MyApplication.scene.setCursor(Cursor.CROSSHAIR);
+
+            penCircle.setDisable(false);
+
+            penLine.setDisable(false);
+
+            transform.setDisable(false);
+
+            unorientedArc.setDisable(true);
+
+            for (Circle circle : circleArray) {
+
+                circle.setOnMousePressed(null);
+
+                circle.setOnMouseDragged(null);
+
+            }
+
+
+            for (Circle circle : circleArray) {
+
+                circle.addEventFilter(MouseEvent.MOUSE_CLICKED, lineDrawEvent);
+
+            }
+
+        }
+
+
+        EventHandler<MouseEvent> trans = new EventHandler<MouseEvent>() {
+
+            @Override
+
+            public void handle(MouseEvent mouseEvent) {
+
+                Dragboard db = circleArray.get(0).startDragAndDrop(TransferMode.ANY);
+
+            }
+
+        };
+
+
+        //Ивент рисования круга
+
+        EventHandler<MouseEvent> drawCircle = new EventHandler<MouseEvent>() {
+
+            @Override
+
+            public void handle(MouseEvent e) {
+
+
+                if (penCircle.isDisable() && e.getX() < 550 && e.getY() < 400) {
+                    for (Graph graph : graphs) {
+                        if (graph.getTab().isSelected()) {
+
+
+                            Pane pane = (Pane) graph.getTab().getContent();
+                            Vertex vertex = new Vertex(e.getX(), e.getY(), pane);
+                            graph.getVertices().add(vertex);
+                            circleArray.add(vertex.getCircle());
+                            vertex.setTextInPane((Pane) graph.getTab().getContent());
+                            vertex.setVertexId(graph.getVertices().size() - 1);
+                            vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
+                            vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
+                            graph.addVertex();
+
+                            // panes.get(1).getChildren().add(circle);
+
+
+                        }
+                    }
+
+
+                }
+            }
+
+        };
+
+
+        EventHandler<MouseEvent> circleOnMousePressedEventHandler =
+
+                new EventHandler<MouseEvent>() {
+
+
+                    @Override
+
+                    public void handle(MouseEvent t) {
+
+                        if (transform.isDisable()) {
+                            for (Graph graph : graphs) {
+                                if (graph.getTab().isSelected()) {
+
+                                    Circle circle = (Circle) t.getSource();
+
+
+                                    for (Vertex vertex : graph.getVertices()) {
+
+                                        vertex.getCircle().setFill(Color.WHITE);
+
+                                        if (vertex.getCircle() == circle) {
+
+                                            vertex.getCircle().setFill(Color.GREEN);
+
+                                            vertex.getCircle().getScene().setOnKeyPressed(e -> {
+
+                                                if (e.getCode() == KeyCode.I) {
+
+                                                    Label secondLabel = new Label("Enter name vertex");
+
+                                                    TextField textField = new TextField("Enter name");
+
+                                                    textField.setMinWidth(120);
+
+                                                    Button button1 = new Button("Button with Text");
+
+
+                                                    VBox secondaryLayout = new VBox();
+
+                                                    secondaryLayout.getChildren().addAll(secondLabel, textField, button1);
+
+
+                                                    Scene secondScene = new Scene(secondaryLayout, 230, 100);
+
+
+                                                    // New window (Stage)
+
+                                                    Stage newWindow = new Stage();
+
+                                                    newWindow.setTitle("Enter name");
+
+                                                    newWindow.setScene(secondScene);
+
+
+                                                    // Specifies the modality for new window.
+
+                                                    newWindow.initModality(Modality.WINDOW_MODAL);
+
+
+                                                    // Specifies the owner Window (parent) for new window
+
+                                                    newWindow.initOwner(stage);
+
+
+                                                    // Set position of second window, related to primary window.
+
+                                                    newWindow.setX(stage.getX() + 100);
+
+                                                    newWindow.setY(stage.getY() + 100);
+
+
+                                                    button1.setOnAction(new EventHandler<ActionEvent>() {
+
+                                                        @Override
+
+                                                        public void handle(ActionEvent actionEvent) {
+
+                                                            vertex.getText().setText(textField.getText());
+
+                                                            newWindow.close();
+
+                                                        }
+
+                                                    });
+
+
+                                                    newWindow.show();
+
+                                                } else if (e.getCode() == KeyCode.DELETE) {
+                                                    Pane pane = (Pane) graph.getTab().getContent();
+                                                    pane.getChildren().remove(vertex.getCircle());
+                                                    for (Arc arc : vertex.getArcs()) {
+                                                        graph.removeArcFromMatrix(arc);
+                                                        pane.getChildren().removeAll(arc.getArrow());
+                                                    }
+                                                    pane.getChildren().removeAll(vertex.getArcs());
+                                                    graph.removeVertex(vertex);
+
+                                                }
+
+                                            });
+
+                                        }
+
+                                    }
+
+                                }
+                            }
+                        }
+
+                    }
+
+                };
+
+
+        EventHandler<MouseEvent> circleOnMouseDraggedEventHandler =
+
+                new EventHandler<MouseEvent>() {
+
+
+                    @Override
+
+                    public void handle(MouseEvent t) {
+
+                        for (Graph graph : graphs) {
+
+                            if (graph.getTab().isSelected()) {
+
+
+                                Circle circle = (Circle) t.getSource();
+
+                                circle.setCenterX(t.getX());
+
+                                circle.setCenterY(t.getY());
+
+
+                                for (Vertex vertex : graph.getVertices()) {
+
+                                    vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
+
+                                    vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
+
+                                    if (vertex.getCircle() == circle && vertex.getArcs() != null) {
+
+                                        for (Arc arc : vertex.getArcs()) {
+
+                                            if (arc.getBegin().getCircle() == vertex.getCircle()) {
+
+                                                arc.setStartX(circle.getCenterX());
+
+                                                arc.setStartY(circle.getCenterY());
+
+                                            } else if (arc.getEnd().getCircle() == vertex.getCircle()) {
+
+                                                arc.setEndX(circle.getCenterX());
+
+                                                arc.setEndY(circle.getCenterY());
+
+                                            }
+
+                                            arc.updateArrow();
+
+                                        }
+
+                                    }
+
+
+                                }
+                            }
+                        }
+                    }
+
+                };
+
+
+        EventHandler<MouseEvent> lineDrawEvent = new EventHandler<>() {
+
+            Arc arc = new Arc(0, 0, 0, 0);
+
+
+            @Override
+
+            public void handle(MouseEvent t) {
+
+                if (penLine.isDisable() || unorientedArc.isDisable()) {
 
                     for (Graph graph : graphs) {
 
                         if (graph.getTab().isSelected()) {
 
 
-                            Circle circle = (Circle) t.getSource();
+                            if (x1 == 0 && y1 == 0) {
 
-                            circle.setCenterX(t.getX());
-
-                            circle.setCenterY(t.getY());
-
-
-                            for (Vertex vertex : graph.getVertices()) {
-
-                                vertex.getText().setX(vertex.getCircle().getCenterX() + 10);
-
-                                vertex.getText().setY(vertex.getCircle().getCenterY() + 10);
-
-                                if (vertex.getCircle() == circle && vertex.getArcs() != null) {
-
-                                    for (Arc arc : vertex.getArcs()) {
-
-                                        if (arc.getBegin().getCircle() == vertex.getCircle()) {
-
-                                            arc.setStartX(circle.getCenterX());
-
-                                            arc.setStartY(circle.getCenterY());
-
-                                        } else if (arc.getEnd().getCircle() == vertex.getCircle()) {
-
-                                            arc.setEndX(circle.getCenterX());
-
-                                            arc.setEndY(circle.getCenterY());
-
-                                        }
-
-                                        arc.updateArrow();
-
-                                    }
-
-                                }
-
-
-                            }
-                        }
-                    }
-                }
-
-            };
-
-
-    EventHandler<MouseEvent> lineDrawEvent = new EventHandler<>() {
-
-        Arc arc = new Arc(0, 0, 0, 0);
-
-
-        @Override
-
-        public void handle(MouseEvent t) {
-
-            if (penLine.isDisable() || unorientedArc.isDisable()) {
-
-                for (Graph graph : graphs) {
-
-                    if (graph.getTab().isSelected()) {
-
-
-                        if (x1 == 0 && y1 == 0) {
-
-                            Circle circle = (Circle) t.getSource();
-
-                            for (Vertex vertex : graph.getVertices()) {
-
-                                if (vertex.getCircle() == circle) {
-
-                                    x1 = t.getX();
-
-                                    y1 = t.getY();
-
-                                    arc.setBegin(vertex);
-
-                                    arc.setStartX(vertex.getCircle().getCenterX());
-
-                                    arc.setStartY(vertex.getCircle().getCenterY());
-
-                                    vertex.addArc(arc);
-
-                                }
-
-                            }
-
-                        } else {
-
-                            if (x2 == 0 && y2 == 0) {
-
-                                x2 = t.getX();
-
-                                y2 = t.getY();
-
-                                Circle circle = (Circle) (t.getSource());
+                                Circle circle = (Circle) t.getSource();
 
                                 for (Vertex vertex : graph.getVertices()) {
 
                                     if (vertex.getCircle() == circle) {
 
+                                        x1 = t.getX();
+
+                                        y1 = t.getY();
+
+                                        arc.setBegin(vertex);
+
+                                        arc.setStartX(vertex.getCircle().getCenterX());
+
+                                        arc.setStartY(vertex.getCircle().getCenterY());
+
                                         vertex.addArc(arc);
 
-                                        arc.setEnd(vertex);
+                                    }
 
-                                        arc.setEndX(vertex.getCircle().getCenterX());
+                                }
 
-                                        arc.setEndY(vertex.getCircle().getCenterY());
+                            } else {
+
+                                if (x2 == 0 && y2 == 0) {
+
+                                    x2 = t.getX();
+
+                                    y2 = t.getY();
+
+                                    Circle circle = (Circle) (t.getSource());
+
+                                    for (Vertex vertex : graph.getVertices()) {
+
+                                        if (vertex.getCircle() == circle) {
+
+                                            vertex.addArc(arc);
+
+                                            arc.setEnd(vertex);
+
+                                            arc.setEndX(vertex.getCircle().getCenterX());
+
+                                            arc.setEndY(vertex.getCircle().getCenterY());
 
 
-                                        vertex.getArcs().add(arc);
+                                            vertex.getArcs().add(arc);
 
 
-                                        Pane pane = (Pane) graph.getTab().getContent();
-                                        pane.getChildren().add(arc);
-                                        if (penLine.isDisable()) {
-                                            arc.setArrow(pane);
-                                        } else if (unorientedArc.isDisable()) {
-                                            arc.setUnorientedArrow(pane);
-                                            arc.updateUnorientedArrow();
+                                            Pane pane = (Pane) graph.getTab().getContent();
+                                            pane.getChildren().add(arc);
+                                            if (penLine.isDisable()) {
+                                                arc.setArrow(pane);
+                                            } else if (unorientedArc.isDisable()) {
+                                                arc.setUnorientedArrow(pane);
+                                                arc.updateUnorientedArrow();
+                                            }
+
+
+                                            // panes.get(0).getChildren().add(arc);
+
+                                            x1 = 0;
+
+                                            x2 = 0;
+
+                                            y1 = 0;
+
+                                            y2 = 0;
+                                            arc.updateArrow();
+                                            graph.addArc(arc);
+                                            //  arc.updateUnorientedArrow();
+
+
+                                            this.arc = new Arc(x1, y1, x2, y2);
+
                                         }
-
-
-                                        // panes.get(0).getChildren().add(arc);
-
-                                        x1 = 0;
-
-                                        x2 = 0;
-
-                                        y1 = 0;
-
-                                        y2 = 0;
-                                        arc.updateArrow();
-                                        graph.addArc(arc);
-                                        //  arc.updateUnorientedArrow();
-
-
-                                        this.arc = new Arc(x1, y1, x2, y2);
 
                                     }
 
@@ -709,14 +722,12 @@ public class MyControler implements Initializable {
                             }
 
                         }
-
                     }
                 }
+
             }
 
-        }
-
-    };
+        };
 
 
 
@@ -753,79 +764,79 @@ public class MyControler implements Initializable {
             };*/
 
 
-    EventHandler<MouseEvent> transLine =
+        EventHandler<MouseEvent> transLine =
 
-            new EventHandler<MouseEvent>() {
+                new EventHandler<MouseEvent>() {
 
 
-                @Override
+                    @Override
 
-                public void handle(MouseEvent t) {
+                    public void handle(MouseEvent t) {
 
-                    for (Graph graph : graphs) {
+                        for (Graph graph : graphs) {
 
-                        for (Vertex vertex : graph.getVertices()) {
-
-                            vertex.getCircle().setFill(Color.WHITE);
-
-                        }
-
-                        Arc arc = (Arc) t.getSource();
-                        if (Math.abs(t.getX() - arc.getStartX()) < 25 && Math.abs(t.getY() - arc.getStartY()) < 25) {
-
-                            arc.setStartX(t.getX());
-
-                            arc.setStartY(t.getY());
-                            graph.removeArcFromMatrix(arc);
-                            arc.getBegin().removeArc(arc);
                             for (Vertex vertex : graph.getVertices()) {
 
-                                if (Math.abs(arc.getStartX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getStartY() - vertex.getCircle().getCenterY()) < 15) {
+                                vertex.getCircle().setFill(Color.WHITE);
 
-                                    arc.setStartX(vertex.getCircle().getCenterX());
+                            }
 
-                                    arc.setStartY(vertex.getCircle().getCenterY());
+                            Arc arc = (Arc) t.getSource();
+                            if (Math.abs(t.getX() - arc.getStartX()) < 25 && Math.abs(t.getY() - arc.getStartY()) < 25) {
 
-                                    arc.setBegin(vertex);
+                                arc.setStartX(t.getX());
 
-                                    vertex.addArc(arc);
+                                arc.setStartY(t.getY());
+                                graph.removeArcFromMatrix(arc);
+                                arc.getBegin().removeArc(arc);
+                                for (Vertex vertex : graph.getVertices()) {
+
+                                    if (Math.abs(arc.getStartX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getStartY() - vertex.getCircle().getCenterY()) < 15) {
+
+                                        arc.setStartX(vertex.getCircle().getCenterX());
+
+                                        arc.setStartY(vertex.getCircle().getCenterY());
+
+                                        arc.setBegin(vertex);
+
+                                        vertex.addArc(arc);
+
+                                    }
+
+                                }
+
+                            } else if (Math.abs(t.getX() - arc.getEndX()) < 25 && Math.abs(t.getY() - arc.getEndY()) < 25) {
+
+                                arc.setEndX(t.getX());
+
+                                arc.setEndY(t.getY());
+                                graph.removeArcFromMatrix(arc);
+                                arc.getEnd().removeArc(arc);
+                                for (Vertex vertex : graph.getVertices()) {
+
+                                    if (Math.abs(arc.getEndX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getEndY() - vertex.getCircle().getCenterY()) < 15) {
+
+                                        arc.setEndX(vertex.getCircle().getCenterX());
+
+                                        arc.setEndY(vertex.getCircle().getCenterY());
+
+                                        arc.setEnd(vertex);
+
+                                        vertex.addArc(arc);
+
+
+                                    }
 
                                 }
 
                             }
 
-                        } else if (Math.abs(t.getX() - arc.getEndX()) < 25 && Math.abs(t.getY() - arc.getEndY()) < 25) {
 
-                            arc.setEndX(t.getX());
-
-                            arc.setEndY(t.getY());
-                            graph.removeArcFromMatrix(arc);
-                            arc.getEnd().removeArc(arc);
-                            for (Vertex vertex : graph.getVertices()) {
-
-                                if (Math.abs(arc.getEndX() - vertex.getCircle().getCenterX()) < 15 && Math.abs(arc.getEndY() - vertex.getCircle().getCenterY()) < 15) {
-
-                                    arc.setEndX(vertex.getCircle().getCenterX());
-
-                                    arc.setEndY(vertex.getCircle().getCenterY());
-
-                                    arc.setEnd(vertex);
-
-                                    vertex.addArc(arc);
-
-
-                                }
-
-                            }
-
+                            arc.updateArrow();
+                            graph.addArc(arc);
                         }
-
-
-                        arc.updateArrow();
-                        graph.addArc(arc);
                     }
-                }
-            };
+                };
 
 
-}
+    }

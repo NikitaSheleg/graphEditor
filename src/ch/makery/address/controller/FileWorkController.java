@@ -25,7 +25,10 @@ public class FileWorkController {
             dBList1.add(new DAT(vertex.getVertexTransX(), vertex.getVertexTransY()));
         }
         for (Arc arc : arcs) {
-            dBList1.add(new DAT(arc.getBegin().getVertexTransX(), arc.getBegin().getVertexTransY(), arc.getEnd().getVertexTransX(), arc.getEnd().getVertexTransY()));
+            dBList1.add(new DAT(arc.getBegin().getVertexTransX(),
+                    arc.getBegin().getVertexTransY(),
+                    arc.getEnd().getVertexTransX(),
+                    arc.getEnd().getVertexTransY()));
         }
         try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream("Node.dat"))) {
             ous.writeObject(dBList1);//сохраняем объект с данными о Node
@@ -36,7 +39,6 @@ public class FileWorkController {
     //метод для восстановления объектов
     public Graph openNode(Tab tab, Graph graph) throws IOException, ClassNotFoundException {
         Pane root = new Pane();
-
         tab.setContent(root);
         ArrayList<Vertex> dragList1 = new ArrayList<>();
         ArrayList<Arc> dragList2 = new ArrayList<>();
@@ -55,18 +57,22 @@ public class FileWorkController {
 
         }
         for (Vertex vertex : dragList1) {
+            graph.getVertices().add(vertex);
+            graph.addVertex();
             for (Arc arc : dragList2) {
+
                 if (vertex.getCircle().getCenterX() == arc.getStartX() && vertex.getCircle().getCenterY() == arc.getStartY()) {
                     vertex.addArc(arc);
                     arc.setBegin(vertex);
-                } else  if (vertex.getCircle().getCenterX() == arc.getEndX() && vertex.getCircle().getCenterY() == arc.getEndY()) {
-                    vertex.addArc(arc);
-                    arc.setEnd(vertex);
-                }
-            }
-        }
 
-        graph.setVertices(dragList1);
+                } else if (vertex.getCircle().getCenterX() == arc.getEndX() && vertex.getCircle().getCenterY() == arc.getEndY()) {
+                    arc.setEnd(vertex);
+                    vertex.addArc(arc);
+                }
+
+            }
+
+        }
         root.getChildren().removeAll(datList);
         root.getChildren().addAll(dragList1);
         root.getChildren().addAll(dragList2);
